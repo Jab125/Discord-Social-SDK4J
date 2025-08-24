@@ -19,6 +19,7 @@ import java.lang.foreign.ValueLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated(forRemoval = true, since = "0.0.21")
 public class FriendsListHelper {
 	public static void displayFriendsList(Client client) {
 		ArrayList<String> strings = new ArrayList<>();
