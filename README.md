@@ -16,94 +16,91 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static dev.jab125.discordsocialsdk.api.root.runCallbacks;
 
-public class Main {
+// Replace with your Discord Application ID
+public static final long APPLICATION_ID = 1349146942634065960L;
+public static final AtomicBoolean running = new AtomicBoolean(true);
 
-	// Replace with your Discord Application ID
-	public static final long APPLICATION_ID = 1349146942634065960L;
-	public static final AtomicBoolean running = new AtomicBoolean(true);
+void main() throws InterruptedException {
+    try {
+        DiscordNatives.loadNatives();
+    } catch (Throwable e) {
+        throw new Error("Failed to initialize natives!", e);
+    }
 
-	public static void main(String[] ignored) throws InterruptedException {
-		try {
-			DiscordNatives.loadNatives();
-		} catch (Throwable e) {
-			throw new Error("Failed to initialize natives!", e);
-		}
+    System.out.println("🚀 Initializing Discord SDK...");
 
-		System.out.println("🚀 Initializing Discord SDK...");
+    // Create our Discord Client
+    Client client = new Client();
 
-		// Create our Discord Client
-		Client client = new Client();
+    // Set up logging callback
+    client.addLogCallback((message, severity) -> {
+        System.out.println("[" + severity + "] " + message);
+    }, Client.LoggingSeverity.INFO);
 
-		// Set up logging callback
-		client.addLogCallback((message, severity) -> {
-			System.out.println("[" + severity + "] " + message);
-		}, Client.LoggingSeverity.INFO);
+    // Set up status callback to monitor client connection
+    client.setStatusChangedCallback((status, error, errorDetail) -> {
+        System.out.println("🔄 Status changed: " + status);
 
-		// Set up status callback to monitor client connection
-		client.setStatusChangedCallback((status, error, errorDetail) -> {
-			System.out.println("🔄 Status changed: " + status);
+        if (status == Client.Status.READY) {
+            System.out.println("✅ Client is ready! You can now call SDK functions.");
 
-			if (status == Client.Status.READY) {
-				System.out.println("✅ Client is ready! You can now call SDK functions.");
+            // Access initial relationships data
+            System.out.println("👥 Friends Count: " + client.getRelationships().size());
 
-				// Access initial relationships data
-				System.out.println("👥 Friends Count: " + client.getRelationships().size());
+            // Configure rich presence details
+            Activity activity = new Activity();
+            activity.setType(Activity.ActivityTypes.PLAYING);
+            activity.setState("In Competitive Match");
+            activity.setDetails("Rank: Diamond II");
 
-				// Configure rich presence details
-				Activity activity = new Activity();
-				activity.setType(Activity.ActivityTypes.PLAYING);
-				activity.setState("In Competitive Match");
-				activity.setDetails("Rank: Diamond II");
+            // Update rich presence
+            client.updateRichPresence(activity, result -> {
+                if (result.successful()) {
+                    System.out.println("🎮 Rich Presence updated successfully!");
+                } else {
+                    System.err.println("❌ Rich Presence update failed");
+                }
+            });
+        } else if (error != Client.Error.NONE) {
+            System.err.println("❌ Connection Error: " + error + " - Details: " + errorDetail);
+        }
+    });
 
-				// Update rich presence
-				client.updateRichPresence(activity, result -> {
-					if (result.successful()) {
-						System.out.println("🎮 Rich Presence updated successfully!");
-					} else {
-						System.err.println("❌ Rich Presence update failed");
-					}
-				});
-			} else if (error != Client.Error.NONE) {
-				System.err.println("❌ Connection Error: " + error + " - Details: " + errorDetail);
-			}
-		});
+    // Generate OAuth2 code verifier for authentication
+    AuthorizationCodeVerifier codeVerifier = client.createAuthorizationCodeVerifier();
 
-		// Generate OAuth2 code verifier for authentication
-		AuthorizationCodeVerifier codeVerifier = client.createAuthorizationCodeVerifier();
+    AuthorizationArgs args = new AuthorizationArgs();
+    args.setClientId(APPLICATION_ID);
+    args.setScopes(client.getDefaultPresenceScopes());
+    args.setCodeChallenge(codeVerifier.challenge());
 
-		AuthorizationArgs args = new AuthorizationArgs();
-		args.setClientId(APPLICATION_ID);
-		args.setScopes(client.getDefaultPresenceScopes());
-		args.setCodeChallenge(codeVerifier.challenge());
+    // Begin authentication process
+    client.authorize(args, (result, code, redirectUri) -> {
+        if (!result.successful()) {
+            System.err.println("❌ Authentication Error: " + result.error());
+        } else {
+            System.out.println("✅ Authorization successful! Getting access token...");
 
-		// Begin authentication process
-		client.authorize(args, (result, code, redirectUri) -> {
-			if (!result.successful()) {
-				System.err.println("❌ Authentication Error: " + result.error());
-			} else {
-				System.out.println("✅ Authorization successful! Getting access token...");
+            // Exchange auth code for access token
+            client.getToken(APPLICATION_ID, code, codeVerifier.verifier(), redirectUri,
+                    (_, accessToken, _, _, _, _) -> {
+                        System.out.println("🔓 Access token received! Establishing connection...");
+                        // Next Step: Update the token and connect
+                        client.updateToken(Client.AuthorizationTokenType.BEARER, accessToken, clientResult -> {
+                            if(clientResult.successful()) {
+                                System.out.println("🔑 Token updated, connecting to Discord...");
+                                client.connect();
+                            }
+                        });
+                    });
+        }
+    });
 
-				// Exchange auth code for access token
-				client.getToken(APPLICATION_ID, code, codeVerifier.verifier(), redirectUri,
-						(_, accessToken, _, _, _, _) -> {
-							System.out.println("🔓 Access token received! Establishing connection...");
-							// Next Step: Update the token and connect
-							client.updateToken(Client.AuthorizationTokenType.BEARER, accessToken, clientResult -> {
-								if(clientResult.successful()) {
-									System.out.println("🔑 Token updated, connecting to Discord...");
-									client.connect();
-								}
-							});
-						});
-			}
-		});
-
-		// Keep application running to allow SDK to receive events and callbacks
-		while (running.get()) {
-			runCallbacks();
-			Thread.sleep(10);
-		}
-	}
+    // Keep application running to allow SDK to receive events and callbacks
+    while (running.get()) {
+        runCallbacks();
+        Thread.sleep(10);
+    }
 }
 ```
 ## Licensing
