@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
 package dev.jab125.discordsocialsdk.api;
 
-import dev.jab125.discordsocialsdk.$;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.foreign.Arena;
