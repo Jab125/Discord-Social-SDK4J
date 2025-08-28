@@ -3,31 +3,33 @@
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // Discord-Social-SDK4J is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
-package dev.jab125.discordsocialsdk.pp;
+package dev.jab125.discordsocialsdk.api;
 
 import dev.jab125.discordsocialsdk.$;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 
-import static dev.jab125.discordsocialsdk.CDiscord.*;
+import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
 
-public class LinkedChannel implements PointerWrapper {
-	private final @$("Discord_LinkedChannel*") MemorySegment instance;
-	public LinkedChannel(@$("Discord_LinkedChannel*") MemorySegment instance) {
+public class ClientResult implements PointerWrapper {
+	private final @$("Discord_ClientResult*") MemorySegment instance;
+	public ClientResult(@$("Discord_ClientResult*") MemorySegment instance) {
 		this.instance = instance;
-	}
-
-	public String name() {
-		try (Arena arena = Arena.ofConfined()) {
-			MemorySegment returnValue = arena.allocate(_Discord_String);
-			Discord_LinkedChannel_Name(instance, returnValue);
-			return _String_Sugar(returnValue);
-		}
 	}
 
 	@Override
 	public MemorySegment getSegment() {
 		return instance;
+	}
+
+	public boolean successful() {
+		return Discord_ClientResult_Successful(instance);
+	}
+
+	public String error() {
+		@$("Discord_String*") MemorySegment error = Arena.ofAuto().allocate(_Discord_String);
+		Discord_ClientResult_Error(instance, error);
+		return _String_Sugar(error);
 	}
 }

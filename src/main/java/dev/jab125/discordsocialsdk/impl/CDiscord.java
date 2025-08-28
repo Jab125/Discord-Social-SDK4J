@@ -3,23 +3,25 @@
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // Discord-Social-SDK4J is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
-package dev.jab125.discordsocialsdk;
+package dev.jab125.discordsocialsdk.impl;
+
+import dev.jab125.discordsocialsdk.$;
 
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.VarHandle;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static dev.jab125.discordsocialsdk.DiscordNatives.LINKER;
-import static dev.jab125.discordsocialsdk.DiscordNatives.lookup;
+import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
+import static dev.jab125.discordsocialsdk.impl.DiscordNatives.lookup;
 
+@SuppressWarnings("removal")
 public class CDiscord {
 
 	private static FunctionDescriptor _Discord_Client_OnStatusChanged;
