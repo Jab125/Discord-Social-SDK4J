@@ -26,6 +26,11 @@ public class Client implements PointerWrapper {
 		this.instance = instance;
 	}
 
+	public String getDefaultPresenceScopes() {
+		// TODO hook into the SDK to get the result of this method
+		return "openid sdk.social_layer_presence";
+	}
+
 	public enum LoggingSeverity {
 		VERBOSE,
 		INFO,
@@ -158,9 +163,6 @@ public class Client implements PointerWrapper {
 		return Optional.of(new LobbyHandle(handle));
 	}
 
-	// GetLobbyMessagesWithLimit
-	// discordpp::ClientResult result,
-	//                         std::vector<discordpp::MessageHandle> messages)
 	public interface GetLobbyMessagesCallback {
 		void call(ClientResult result, List<MessageHandle> messages);
 	}
