@@ -7,4 +7,5 @@ module dev.jab125.discordsocialsdk {
 	exports dev.jab125.discordsocialsdk.api.discord;
 
 	opens dev.jab125.discordsocialsdk.impl;
+	opens dev.jab125.discordsocialsdk.impl.cdiscord;
 }
