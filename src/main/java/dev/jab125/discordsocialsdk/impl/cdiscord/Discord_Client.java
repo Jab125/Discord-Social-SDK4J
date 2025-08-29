@@ -1,13 +1,14 @@
 package dev.jab125.discordsocialsdk.impl.cdiscord;
 
 import dev.jab125.discordsocialsdk.api.$;
-import dev.jab125.discordsocialsdk.impl.CDiscord;
+import dev.jab125.discordsocialsdk.impl.CDiscord.Discord_FreeFn;
 
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+import static dev.jab125.discordsocialsdk.impl.*;
 import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 
@@ -244,7 +245,7 @@ public class Discord_Client {
 					_Discord_String,
 					_Discord_String,
 					ValueLayout.ADDRESS);
-			_Discord_Client_AuthorizationCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_AuthorizationCallback.class, "call0",
+			_Discord_Client_AuthorizationCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_AuthorizationCallback.class, "call0",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
 			_Discord_Client_Authorize = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
@@ -274,7 +275,7 @@ public class Discord_Client {
 					ValueLayout.JAVA_INT,
 					_Discord_String,
 					ValueLayout.ADDRESS);
-			_Discord_Client_TokenExchangeCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_TokenExchangeCallback.class, "call0",
+			_Discord_Client_TokenExchangeCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_TokenExchangeCallback.class, "call0",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, int.class, int.class, MemorySegment.class, MemorySegment.class));
 
 			_Discord_Client_GetToken = LINKER.downcallHandle(functionAddress, functionSignature);
@@ -283,7 +284,7 @@ public class Discord_Client {
 			_Discord_Client_UpdateTokenCallback = FunctionDescriptor.ofVoid(
 					ValueLayout.ADDRESS,
 					ValueLayout.ADDRESS);
-			_Discord_Client_UpdateTokenCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_UpdateTokenCallback.class, "call",
+			_Discord_Client_UpdateTokenCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_UpdateTokenCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
 
 
@@ -297,7 +298,7 @@ public class Discord_Client {
 					ValueLayout.ADDRESS,
 					_Discord_MessageHandleSpan,
 					ValueLayout.ADDRESS);
-			_Discord_Client_GetLobbyMessagesCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_GetLobbyMessagesCallback.class, "call",
+			_Discord_Client_GetLobbyMessagesCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetLobbyMessagesCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
 
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
@@ -313,7 +314,7 @@ public class Discord_Client {
 					ValueLayout.ADDRESS,
 					ValueLayout.JAVA_LONG,
 					ValueLayout.ADDRESS);
-			_Discord_Client_SendUserMessageCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_SendUserMessageCallback.class, "call",
+			_Discord_Client_SendUserMessageCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_SendUserMessageCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, long.class, MemorySegment.class));
 			MemorySegment functionAddress = lookup.find("Discord_Client_SendLobbyMessage").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
@@ -323,7 +324,7 @@ public class Discord_Client {
 			_Discord_Client_MessageCreatedCallback = FunctionDescriptor.ofVoid(
 					ValueLayout.JAVA_LONG,
 					ValueLayout.ADDRESS);
-			_Discord_Client_MessageCreatedCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_MessageCreatedCallback.class, "call",
+			_Discord_Client_MessageCreatedCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_MessageCreatedCallback.class, "call",
 					MethodType.methodType(void.class, long.class, MemorySegment.class));
 			MemorySegment functionAddress = lookup.find("Discord_Client_SetMessageCreatedCallback").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
@@ -337,7 +338,7 @@ public class Discord_Client {
 					_Discord_String,
 					ValueLayout.JAVA_INT,
 					ValueLayout.ADDRESS);
-			_Discord_Client_LogCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_LogCallback.class, "call0",
+			_Discord_Client_LogCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_LogCallback.class, "call0",
 					MethodType.methodType(void.class, MemorySegment.class, int.class, MemorySegment.class));
 
 			_Discord_Client_AddLogCallback = LINKER.downcallHandle(functionAddress, functionSignature);
@@ -373,7 +374,7 @@ public class Discord_Client {
 					ValueLayout.JAVA_INT,
 					ValueLayout.JAVA_INT,
 					ValueLayout.ADDRESS);
-			_Discord_Client_OnStatusChanged$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_OnStatusChanged.class, "call",
+			_Discord_Client_OnStatusChanged$handle = MethodHandles.lookup().findVirtual(Discord_Client_OnStatusChanged.class, "call",
 					MethodType.methodType(void.class, int.class, int.class, int.class, MemorySegment.class));
 
 			_Discord_Client_SetStatusChangedCallback = methodHandle;
@@ -383,7 +384,7 @@ public class Discord_Client {
 					ValueLayout.ADDRESS,
 					ValueLayout.JAVA_LONG,
 					ValueLayout.ADDRESS);
-			_Discord_Client_CreateOrJoinLobbyCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_CreateOrJoinLobbyCallback.class, "call",
+			_Discord_Client_CreateOrJoinLobbyCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_CreateOrJoinLobbyCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, long.class, MemorySegment.class));
 
 			MemorySegment functionAddress = lookup.find("Discord_Client_CreateOrJoinLobby").get();
@@ -405,7 +406,7 @@ public class Discord_Client {
 			_Discord_Client_LinkOrUnlinkChannelCallback = FunctionDescriptor.ofVoid(
 					ValueLayout.ADDRESS,
 					ValueLayout.ADDRESS);
-			_Discord_Client_LinkOrUnlinkChannelCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_LinkOrUnlinkChannelCallback.class, "call",
+			_Discord_Client_LinkOrUnlinkChannelCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_LinkOrUnlinkChannelCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
 			MemorySegment functionAddress = lookup.find("Discord_Client_LinkChannelToLobby").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
@@ -415,7 +416,7 @@ public class Discord_Client {
 			_Discord_Client_UpdateRichPresenceCallback = FunctionDescriptor.ofVoid(
 					ValueLayout.ADDRESS,
 					ValueLayout.ADDRESS);
-			_Discord_Client_UpdateRichPresenceCallback$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_Client_UpdateRichPresenceCallback.class, "call",
+			_Discord_Client_UpdateRichPresenceCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_UpdateRichPresenceCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
 
 			MemorySegment functionAddress = lookup.find("Discord_Client_UpdateRichPresence").get();
