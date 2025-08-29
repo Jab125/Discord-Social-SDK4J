@@ -37,13 +37,4 @@ public interface NativesDiscoverer {
 	default void error(Throwable t) {
 		t.printStackTrace();
 	}
-
-	// 	private static String name() {
-	//		String property = System.getProperty("os.name");
-	//		System.out.println(property);
-	//		System.out.println(System.getProperty("os.arch"));
-	//		if (property.toLowerCase(Locale.ROOT).contains("mac")) return "/osx/libdiscord_partner_sdk.dylib";
-	//		if (property.toLowerCase(Locale.ROOT).contains("windows")) return (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm") || System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arch")) ? "/windows/discord_partner_sdk_arm.dll" : "/windows/discord_partner_sdk.dll";
-	//		else return "/linux/libdiscord_partner_sdk.so";
-	//	}
 }
