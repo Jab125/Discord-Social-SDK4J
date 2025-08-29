@@ -47,5 +47,4 @@ public class DiscordNatives {
 		else if (osName.contains("linux")) platform = arch.contains("arm") ? Platform.LINUX_ARM : Platform.LINUX_X86;
 		else platform = Platform.OTHER;
 	}
-
 }
