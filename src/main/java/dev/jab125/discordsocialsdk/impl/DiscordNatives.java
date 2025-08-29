@@ -5,42 +5,47 @@
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
 package dev.jab125.discordsocialsdk.impl;
 
+import dev.jab125.discordsocialsdk.api.NativesDiscoverer;
+import dev.jab125.discordsocialsdk.api.Platform;
+
 import java.lang.foreign.Arena;
 import java.lang.foreign.Linker;
 import java.lang.foreign.SymbolLookup;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 
 // Deprecated only to discourage usage
+@SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated(forRemoval = true)
 public class DiscordNatives {
 	private static Path nativeLibraryPath;
 	static final Linker LINKER = Linker.nativeLinker();
+	private static final Platform platform;
 
 	@Deprecated(forRemoval = true)
-	public static void loadNatives0() throws Throwable {
-		nativeLibraryPath = Files.createTempFile("l", "." + name().split("\\.")[1]);
+	public static boolean loadNatives0(NativesDiscoverer discoverer) {
 		try {
-			Files.copy(DiscordNatives.class.getResourceAsStream(name()), nativeLibraryPath, StandardCopyOption.REPLACE_EXISTING);
+			nativeLibraryPath = discoverer.getLibraryPath(platform);
+			System.load(nativeLibraryPath.toAbsolutePath().toString());
+			return true;
 		} catch (Throwable t) {
-			throw new Error("Failed to find " + name() + "! Please compile the JAR with the natives bundled.");
+			discoverer.error(t);
+			return false;
 		}
-		System.load(nativeLibraryPath.toAbsolutePath().toString());
-	}
-
-	private static String name() {
-		String property = System.getProperty("os.name");
-		System.out.println(property);
-		System.out.println(System.getProperty("os.arch"));
-		if (property.toLowerCase(Locale.ROOT).contains("mac")) return "/osx/libdiscord_partner_sdk.dylib";
-		if (property.toLowerCase(Locale.ROOT).contains("windows")) return (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm") || System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arch")) ? "/windows/discord_partner_sdk_arm.dll" : "/windows/discord_partner_sdk.dll";
-		else return "/linux/libdiscord_partner_sdk.so";
 	}
 
 	@Deprecated(forRemoval = true)
 	public static SymbolLookup lookup(Arena arena) {
 		return SymbolLookup.libraryLookup(nativeLibraryPath, arena);
 	}
+
+	static {
+		String osName = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+		String arch = System.getProperty("os.arch", "").toLowerCase(Locale.ROOT);
+		if (osName.contains("mac")) platform = Platform.MACOS;
+		else if (osName.contains("windows")) platform = arch.contains("arm") ? Platform.WINDOWS_ARM : Platform.WINDOWS_X86;
+		else if (osName.contains("linux")) platform = arch.contains("arm") ? Platform.LINUX_ARM : Platform.LINUX_X86;
+		else platform = Platform.OTHER;
+	}
+
 }

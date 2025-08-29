@@ -7,7 +7,12 @@ package dev.jab125.discordsocialsdk.api;
 
 @SuppressWarnings("removal")
 public class DiscordNatives {
-	public static void loadNatives() throws Throwable {
-		dev.jab125.discordsocialsdk.impl.DiscordNatives.loadNatives0();
+	@Deprecated(forRemoval = true)
+	public static boolean loadNatives() {
+		return loadNatives(NativesDiscoverer.FIND_WITHIN_THIS_LIBRARY);
+	}
+
+	public static boolean loadNatives(NativesDiscoverer nativesDiscoverer) {
+		return dev.jab125.discordsocialsdk.impl.DiscordNatives.loadNatives0(nativesDiscoverer);
 	}
 }
