@@ -21,7 +21,7 @@ import java.util.Map;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.lookup;
 
-@SuppressWarnings("removal")
+@SuppressWarnings({"removal", "CodeBlock2Expr"})
 public class CDiscord {
 
 	private static FunctionDescriptor _Discord_Client_OnStatusChanged;
