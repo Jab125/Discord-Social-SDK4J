@@ -3,39 +3,36 @@
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // Discord-Social-SDK4J is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
-package dev.jab125.discordsocialsdk.api;
+package dev.jab125.discordsocialsdk.api.discord;
+
+import dev.jab125.discordsocialsdk.api.$;
+import dev.jab125.discordsocialsdk.api.PointerWrapper;
+import dev.jab125.discordsocialsdk.impl.CDiscord;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
-import java.util.Map;
-import java.util.Optional;
 
 import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
 
-public class LobbyHandle implements PointerWrapper {
-	private final @$("Discord_LobbyHandle*") MemorySegment instance;
-	public LobbyHandle(@$("Discord_LobbyHandle*") MemorySegment instance) {
+public class AuthorizationCodeVerifier implements PointerWrapper {
+	private final @$("Discord_AuthorizationCodeVerifier*") MemorySegment instance;
+	public AuthorizationCodeVerifier(@$("Discord_AuthorizationCodeVerifier*") MemorySegment instance) {
 		this.instance = instance;
 	}
 
-	public long id() {
-		return Discord_LobbyHandle_Id(instance);
+	public AuthorizationCodeChallenge challenge() {
+		@$("Discord_AuthorizationCodeChallenge*") MemorySegment challenge = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Discord_AuthorizationCodeVerifier_Challenge(instance, challenge);
+		return new AuthorizationCodeChallenge(challenge);
 	}
 
-	public Map<String, String> metadata() {
+	public String verifier() {
 		try (Arena arena = Arena.ofConfined()) {
-			@$("Discord_Properties*") MemorySegment properties = arena.allocate(_Discord_Properties);
-			Discord_LobbyHandle_Metadata(instance, properties);
-			return _unpack__Discord_Properties(properties);
+			@$("Discord_String*") MemorySegment string = arena.allocate(CDiscord._Discord_String);
+			Discord_AuthorizationCodeVerifier_Verifier(instance, string);
+			return _String_Sugar(string);
 		}
-	}
-
-	public Optional<LinkedChannel> linkedChannel() {
-		@$("Discord_LinkedChannel*") MemorySegment returnValue = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
-		boolean b = Discord_LobbyHandle_LinkedChannel(instance, returnValue);
-		if (!b) return Optional.empty();
-		return Optional.of(new LinkedChannel(returnValue));
 	}
 
 	@Override

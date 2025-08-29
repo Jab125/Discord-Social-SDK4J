@@ -7,14 +7,14 @@ Discord-Social-SDK4J is a project that aims to make easy-to-use bindings for Dis
 #### Java port of [Getting Started with C++ and the Discord Social SDK](https://discord.com/developers/docs/discord-social-sdk/getting-started/using-c++)
 ```java
 import dev.jab125.discordsocialsdk.api.DiscordNatives;
-import dev.jab125.discordsocialsdk.api.Activity;
-import dev.jab125.discordsocialsdk.api.AuthorizationArgs;
-import dev.jab125.discordsocialsdk.api.AuthorizationCodeVerifier;
-import dev.jab125.discordsocialsdk.api.Client;
+import dev.jab125.discordsocialsdk.api.discord.Activity;
+import dev.jab125.discordsocialsdk.api.discord.AuthorizationArgs;
+import dev.jab125.discordsocialsdk.api.discord.AuthorizationCodeVerifier;
+import dev.jab125.discordsocialsdk.api.discord.Client;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static dev.jab125.discordsocialsdk.api.root.runCallbacks;
+import static dev.jab125.discordsocialsdk.api.discord.root.runCallbacks;
 
 // Replace with your Discord Application ID
 public static final long APPLICATION_ID = 1349146942634065960L;
