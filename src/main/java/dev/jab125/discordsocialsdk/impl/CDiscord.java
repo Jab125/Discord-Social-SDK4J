@@ -102,7 +102,7 @@ public class CDiscord {
 		}
 	}
 
-	@SuppressWarnings("UnusedLabel")
+	@SuppressWarnings({"UnusedLabel", "OptionalGetWithoutIsPresent"})
 	private static void createHandles() throws NoSuchMethodException, IllegalAccessException {
 		Arena arena = Arena.ofAuto();
 		SymbolLookup lookup = lookup(arena);
@@ -1084,7 +1084,7 @@ public class CDiscord {
 	//                                                         Discord_Client_OnStatusChanged cb,
 	//                                                         Discord_FreeFn cb__userDataFree,
 	//                                                         void* cb__userData);
-	@SuppressWarnings({"UnusedLabel", "unused"})
+	@SuppressWarnings({"UnusedLabel", "unused", "OptionalGetWithoutIsPresent"})
 	public static void setupMessageHandles(Arena arena, SymbolLookup lookup) {
 		Discord_MessageHandle_Drop: {
 			MemorySegment functionAddress = lookup.find("Discord_MessageHandle_Drop").get();
@@ -1345,7 +1345,7 @@ public class CDiscord {
 		});
 		return b[0];
 	}
-	@SuppressWarnings("UnusedLabel")
+	@SuppressWarnings({"UnusedLabel", "OptionalGetWithoutIsPresent"})
 	public static void setupLobbyHandles(Arena arena, SymbolLookup lookup) {
 		Discord_LobbyHandle_Id: {
 			MemorySegment functionAddress = lookup.find("Discord_LobbyHandle_Id").get();
