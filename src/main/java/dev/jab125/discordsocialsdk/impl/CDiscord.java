@@ -1088,12 +1088,12 @@ public class CDiscord {
 	public static void setupMessageHandles(Arena arena, SymbolLookup lookup) {
 		Discord_MessageHandle_Drop: {
 			MemorySegment functionAddress = lookup.find("Discord_MessageHandle_Drop").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS);
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
 			_Discord_MessageHandle_Drop = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_MessageHandle_Clone: {
 			MemorySegment functionAddress = lookup.find("Discord_MessageHandle_Clone").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_MessageHandle_Clone = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_MessageHandle_AdditionalContent: {
@@ -1184,22 +1184,16 @@ public class CDiscord {
 	}
 
 	private static MethodHandle _Discord_MessageHandle_Drop;
-	public static boolean Discord_MessageHandle_Drop(@$("Discord_MessageHandle*") MemorySegment self) {
-		boolean[] b = new boolean[1];
+	public static void Discord_MessageHandle_Drop(@$("Discord_MessageHandle*") MemorySegment self) {
 		r(() -> {
-			boolean c = (boolean) _Discord_MessageHandle_Drop.invokeExact(self);
-			b[0] = c;
+			_Discord_MessageHandle_Drop.invokeExact(self);
 		});
-		return b[0];
 	}
 	private static MethodHandle _Discord_MessageHandle_Clone;
-	public static boolean Discord_MessageHandle_Clone(@$("Discord_MessageHandle*") MemorySegment self, @$("Discord_MessageHandle const*") MemorySegment other) {
-		boolean[] b = new boolean[1];
+	public static void Discord_MessageHandle_Clone(@$("Discord_MessageHandle*") MemorySegment self, @$("Discord_MessageHandle const*") MemorySegment other) {
 		r(() -> {
-			boolean c = (boolean) _Discord_MessageHandle_Clone.invokeExact(self, other);
-			b[0] = c;
+			_Discord_MessageHandle_Clone.invokeExact(self, other);
 		});
-		return b[0];
 	}
 	private static MethodHandle _Discord_MessageHandle_AdditionalContent;
 	public static boolean Discord_MessageHandle_AdditionalContent(@$("Discord_MessageHandle*") MemorySegment self, @$("Discord_AdditionalContent*") MemorySegment returnValue) {
