@@ -20,20 +20,14 @@ import java.util.Map;
 
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.lookup;
+import static dev.jab125.discordsocialsdk.impl.cdiscord.Discord_Client.setupDiscordClient;
 
 @SuppressWarnings({"removal", "CodeBlock2Expr"})
 public class CDiscord {
 
-	private static FunctionDescriptor _Discord_Client_OnStatusChanged;
-	private static MethodHandle _Discord_Client_OnStatusChanged$handle;
-	private static FunctionDescriptor _Discord_FreeFn;
-	private static MethodHandle _Discord_FreeFn$handle;
-	private static MethodHandle _Discord_Client_Init;
-	private static MethodHandle _Discord_Client_CreateAuthorizationCodeVerifier;
-	private static MethodHandle _Discord_Client_Authorize;
-	private static FunctionDescriptor _Discord_Client_AuthorizationCallback;
+	public static FunctionDescriptor _Discord_FreeFn;
+	public static MethodHandle _Discord_FreeFn$handle;
 	public static StructLayout _Discord_String;
-	private static MethodHandle _Discord_Client_AuthorizationCallback$handle;
 	private static MethodHandle _Discord_AuthorizationArgs_Init;
 	private static MethodHandle _Discord_AuthorizationArgs_SetClientId;
 	private static MethodHandle _Discord_AuthorizationArgs_SetScopes;
@@ -41,56 +35,22 @@ public class CDiscord {
 	private static MethodHandle _Discord_AuthorizationCodeVerifier_Challenge;
 	private static MethodHandle _Discord_ClientResult_Successful;
 	private static MethodHandle _Discord_ClientResult_Error;
-	private static MethodHandle _Discord_Client_AddLogCallback;
-	private static FunctionDescriptor _Discord_Client_LogCallback;
-	private static MethodHandle _Discord_Client_LogCallback$handle;
-	private static MethodHandle _Discord_Client_GetToken;
-	private static MethodHandle _Discord_Client_TokenExchangeCallback$handle;
-	private static FunctionDescriptor _Discord_Client_TokenExchangeCallback;
 	private static MethodHandle _Discord_AuthorizationCodeVerifier_Verifier;
-	private static MethodHandle _Discord_Client_UpdateToken;
-	private static MethodHandle _Discord_Client_UpdateTokenCallback$handle;
-	private static FunctionDescriptor _Discord_Client_UpdateTokenCallback;
-	private static MethodHandle _Discord_Client_Connect;
 	private static MethodHandle _Discord_Activity_Init;
 	private static MethodHandle _Discord_Activity_SetType;
-	private static MethodHandle _Discord_Client_UpdateRichPresence;
-	private static FunctionDescriptor _Discord_Client_UpdateRichPresenceCallback;
-	private static MethodHandle _Discord_Client_UpdateRichPresenceCallback$handle;
 	private static MethodHandle _Discord_Activity_SetState;
 	private static MethodHandle _Discord_Activity_SetDetails;
 	private static MethodHandle _Discord_Activity_SetApplicationId;
-	private static MethodHandle _Discord_Client_SetApplicationId;
-	private static MethodHandle _Discord_Client_GetApplicationId;
-	private static MethodHandle _Discord_Client_GetRelationships;
 	public static StructLayout _Discord_RelationshipHandleSpan;
 	private static MethodHandle _Discord_RelationshipHandle_Id;
 	private static MethodHandle _Discord_RelationshipHandle_User;
 	private static MethodHandle _Discord_UserHandle_DisplayName;
 	private static MethodHandle _Discord_RelationshipHandle_DiscordRelationshipType;
 	private static MethodHandle _Discord_UserHandle_Id;
-	private static MethodHandle _Discord_Client_CreateOrJoinLobby;
-	private static FunctionDescriptor _Discord_Client_CreateOrJoinLobbyCallback;
-	private static MethodHandle _Discord_Client_CreateOrJoinLobbyCallback$handle;
-	private static MethodHandle _Discord_Client_LinkChannelToLobby;
-	private static FunctionDescriptor _Discord_Client_LinkOrUnlinkChannelCallback;
-	private static MethodHandle _Discord_Client_LinkOrUnlinkChannelCallback$handle;
-	private static MethodHandle _Discord_Client_SendLobbyMessage;
-	private static FunctionDescriptor _Discord_Client_SendUserMessageCallback;
-	private static MethodHandle _Discord_Client_SendUserMessageCallback$handle;
-	private static MethodHandle _Discord_Client_SetMessageCreatedCallback;
-	private static FunctionDescriptor _Discord_Client_MessageCreatedCallback;
-	private static MethodHandle _Discord_Client_MessageCreatedCallback$handle;
-	private static StructLayout _Discord_MessageHandleSpan;
-	private static MethodHandle _Discord_Client_GetLobbyMessagesCallback$handle;
-	private static FunctionDescriptor _Discord_Client_GetLobbyMessagesCallback;
-	private static MethodHandle _Discord_Client_GetLobbyMessagesWithLimit;
-	private static MethodHandle _Discord_Client_GetLobbyIds;
+	public static StructLayout _Discord_MessageHandleSpan;
 	public static StructLayout _Discord_UInt64Span;
 	public static StructLayout _Discord_Properties;
 	private static MethodHandle _Discord_RelationshipHandle_GameRelationshipType;
-	private static MethodHandle _Discord_Client_GetRelationshipsByGroup;
-	private static MethodHandle _Discord_Client_GetLobbyHandle;
 
 	static {
 		try {
@@ -106,6 +66,11 @@ public class CDiscord {
 	private static void createHandles() throws NoSuchMethodException, IllegalAccessException {
 		Arena arena = Arena.ofAuto();
 		SymbolLookup lookup = lookup(arena);
+		Discord_FreeFn: {
+			_Discord_FreeFn = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
+			_Discord_FreeFn$handle = MethodHandles.lookup().findVirtual(CDiscord.Discord_FreeFn.class, "call",
+					MethodType.methodType(void.class, MemorySegment.class));
+		}
 		Discord_String: {
 			_Discord_String = MemoryLayout.structLayout(
 					ValueLayout.ADDRESS.withName("ptr"),
@@ -169,11 +134,6 @@ public class CDiscord {
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_UserHandle_DisplayName = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
-		Discord_Client_GetRelationshipsByGroup: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetRelationshipsByGroup").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS);
-			_Discord_Client_GetRelationshipsByGroup = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
 		Discord_SetFreeThreaded: {
 			MemorySegment functionAddress = lookup.find("Discord_SetFreeThreaded").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid();
@@ -205,112 +165,6 @@ public class CDiscord {
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Activity_SetApplicationId = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
-		Discord_Client_Init: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_Init").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
-			_Discord_Client_Init = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetRelationships: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetRelationships").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_GetRelationships = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetLobbyIds: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetLobbyIds").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_GetLobbyIds = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetLobbyMessagesWithLimit: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetLobbyMessagesWithLimit").get();
-			_Discord_Client_GetLobbyMessagesCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					_Discord_MessageHandleSpan,
-					ValueLayout.ADDRESS);
-			_Discord_Client_GetLobbyMessagesCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetLobbyMessagesCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
-
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_GetLobbyMessagesWithLimit = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_UpdateRichPresence: {
-			_Discord_Client_UpdateRichPresenceCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS);
-			_Discord_Client_UpdateRichPresenceCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_UpdateRichPresenceCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
-
-			MemorySegment functionAddress = lookup.find("Discord_Client_UpdateRichPresence").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS,ValueLayout.ADDRESS,ValueLayout.ADDRESS,ValueLayout.ADDRESS,ValueLayout.ADDRESS);
-			_Discord_Client_UpdateRichPresence = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_Connect: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_Connect").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
-			_Discord_Client_Connect = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_SetApplicationId: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_SetApplicationId").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_SetApplicationId = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetApplicationId: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetApplicationId").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
-			_Discord_Client_GetApplicationId = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_SetStatusChangedCallback: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_SetStatusChangedCallback").get();
-			//var layout = MemoryLayout.sequenceLayout()
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS
-			);
-
-			// typedef void (*Discord_Client_OnStatusChanged)(Discord_Client_Status status,
-			//                                               Discord_Client_Error error,
-			//                                               int32_t errorDetail,
-			//                                               void* userData);
-
-			MethodHandle methodHandle = LINKER.downcallHandle(functionAddress, functionSignature);
-			_Discord_Client_OnStatusChanged = FunctionDescriptor.ofVoid(
-					ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT,
-					ValueLayout.ADDRESS);
-			_Discord_Client_OnStatusChanged$handle = MethodHandles.lookup().findVirtual(Discord_Client_OnStatusChanged.class, "call",
-					MethodType.methodType(void.class, int.class, int.class, int.class, MemorySegment.class));
-
-			_Discord_FreeFn = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
-			_Discord_FreeFn$handle = MethodHandles.lookup().findVirtual(Discord_FreeFn.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class));
-
-			_Discord_SetStatusChangedCallback = methodHandle;
-		}
-		Discord_Client_CreateAuthorizationCodeVerifier: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_CreateAuthorizationCodeVerifier").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_CreateAuthorizationCodeVerifier = LINKER.downcallHandle(functionAddress, functionSignature);
-		}// MemorySegment result, String code, String redirectUri, MemorySegment userData
-		Discord_Client_Authorize: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_Authorize").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS
-			);
-			_Discord_Client_AuthorizationCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					_Discord_String,
-					_Discord_String,
-					ValueLayout.ADDRESS);
-			_Discord_Client_AuthorizationCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_AuthorizationCallback.class, "call0",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
-			_Discord_Client_Authorize = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
 		Discord_AuthorizationArgs_Init: {
 			MemorySegment functionAddress = lookup.find("Discord_AuthorizationArgs_Init").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
@@ -336,56 +190,6 @@ public class CDiscord {
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_AuthorizationCodeVerifier_Challenge = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
-		Discord_ClientResult_Successful: {
-			MemorySegment functionAddress = lookup.find("Discord_ClientResult_Successful").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS);
-			_Discord_ClientResult_Successful = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_ClientResult_Error: {
-			MemorySegment functionAddress = lookup.find("Discord_ClientResult_Error").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_ClientResult_Error = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_AddLogCallback: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_AddLogCallback").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT);
-
-			_Discord_Client_LogCallback = FunctionDescriptor.ofVoid(
-					_Discord_String,
-					ValueLayout.JAVA_INT,
-					ValueLayout.ADDRESS);
-			_Discord_Client_LogCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_LogCallback.class, "call0",
-					MethodType.methodType(void.class, MemorySegment.class, int.class, MemorySegment.class));
-
-			_Discord_Client_AddLogCallback = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetToken: {
-			//Discord_Client_GetToken();
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetToken").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.JAVA_LONG,
-					_Discord_String,
-					_Discord_String,
-					_Discord_String,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS
-			);
-
-			_Discord_Client_TokenExchangeCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					_Discord_String,
-					_Discord_String,
-					ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT,
-					_Discord_String,
-					ValueLayout.ADDRESS);
-			_Discord_Client_TokenExchangeCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_TokenExchangeCallback.class, "call0",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class, int.class, int.class, MemorySegment.class, MemorySegment.class));
-
-			_Discord_Client_GetToken = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
 		Discord_AuthorizationCodeVerifier_Verifier: {
 			MemorySegment functionAddress = lookup.find("Discord_AuthorizationCodeVerifier_Verifier").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
@@ -395,41 +199,6 @@ public class CDiscord {
 			MemorySegment functionAddress = lookup.find("Discord_UserHandle_Id").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
 			_Discord_UserHandle_Id = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_UpdateToken: {
-			_Discord_Client_UpdateTokenCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS);
-			_Discord_Client_UpdateTokenCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_UpdateTokenCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
-
-
-			MemorySegment functionAddress = lookup.find("Discord_Client_UpdateToken").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_INT, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_UpdateToken = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_CreateOrJoinLobby: {
-			_Discord_Client_CreateOrJoinLobbyCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.JAVA_LONG,
-					ValueLayout.ADDRESS);
-			_Discord_Client_CreateOrJoinLobbyCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_CreateOrJoinLobbyCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, long.class, MemorySegment.class));
-
-			MemorySegment functionAddress = lookup.find("Discord_Client_CreateOrJoinLobby").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_CreateOrJoinLobby = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_LinkChannelToLobby: {
-
-			_Discord_Client_LinkOrUnlinkChannelCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.ADDRESS);
-			_Discord_Client_LinkOrUnlinkChannelCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_LinkOrUnlinkChannelCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
-			MemorySegment functionAddress = lookup.find("Discord_Client_LinkChannelToLobby").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_LinkChannelToLobby = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Activity_SetState: {
 			MemorySegment functionAddress = lookup.find("Discord_Activity_SetState").get();
@@ -441,67 +210,27 @@ public class CDiscord {
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Activity_SetDetails = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
-		Discord_Client_SendLobbyMessage: {
-			_Discord_Client_SendUserMessageCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.ADDRESS,
-					ValueLayout.JAVA_LONG,
-					ValueLayout.ADDRESS);
-			_Discord_Client_SendUserMessageCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_SendUserMessageCallback.class, "call",
-					MethodType.methodType(void.class, MemorySegment.class, long.class, MemorySegment.class));
-			MemorySegment functionAddress = lookup.find("Discord_Client_SendLobbyMessage").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_SendLobbyMessage = LINKER.downcallHandle(functionAddress, functionSignature);
+		Discord_ClientResult_Successful: {
+			MemorySegment functionAddress = lookup.find("Discord_ClientResult_Successful").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS);
+			_Discord_ClientResult_Successful = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
-		Discord_Client_SetMessageCreatedCallback: {
-			_Discord_Client_MessageCreatedCallback = FunctionDescriptor.ofVoid(
-					ValueLayout.JAVA_LONG,
-					ValueLayout.ADDRESS);
-			_Discord_Client_MessageCreatedCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_MessageCreatedCallback.class, "call",
-					MethodType.methodType(void.class, long.class, MemorySegment.class));
-			MemorySegment functionAddress = lookup.find("Discord_Client_SetMessageCreatedCallback").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
-			_Discord_Client_SetMessageCreatedCallback = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetMessageHandle: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetMessageHandle").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
-			_Discord_Client_GetMessageHandle = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_GetLobbyHandle: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_GetLobbyHandle").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
-			_Discord_Client_GetLobbyHandle = LINKER.downcallHandle(functionAddress, functionSignature);
-		}
-		Discord_Client_StartCall: {
-			MemorySegment functionAddress = lookup.find("Discord_Client_StartCall").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
-			_Discord_Client_StartCall = LINKER.downcallHandle(functionAddress, functionSignature);
+		Discord_ClientResult_Error: {
+			MemorySegment functionAddress = lookup.find("Discord_ClientResult_Error").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			_Discord_ClientResult_Error = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		setupMessageHandles(arena, lookup);
 		setupLobbyHandles(arena, lookup);
 		setupLinkedChannels(arena, lookup);
+		setupDiscordClient(arena, lookup);
 	}
 
 	// all ()V
 	private static MethodHandle _Discord_ResetCallbacks;
 	private static MethodHandle _Discord_RunCallbacks;
 	private static MethodHandle _Discord_SetFreeThreaded;
-	private static MethodHandle _Discord_SetStatusChangedCallback;
 
-//	void DISCORD_API Discord_Client_GetRelationships(Discord_Client* self,
-//                                                 Discord_RelationshipHandleSpan* returnValue);
-	public static void Discord_Client_GetRelationships(@$("Discord_Client*") MemorySegment self, @$("Discord_RelationshipHandleSpan*") MemorySegment returnValue) {
-		r(() -> {
-			_Discord_Client_GetRelationships.invokeExact(self, returnValue);
-		});
-	}
-
-	public static void Discord_Client_GetLobbyIds(@$("Discord_Client*") MemorySegment self, @$("Discord_UInt64Span*") MemorySegment returnValue) {
-		r(() -> {
-			_Discord_Client_GetLobbyIds.invokeExact(self, returnValue);
-		});
-	}
-	// void DISCORD_API Discord_Client_GetLobbyIds(Discord_Client* self, Discord_UInt64Span* returnValue);
 
 	public static void Discord_SetFreeThreaded() {
 		r(() -> {
@@ -536,32 +265,6 @@ public class CDiscord {
 			_Discord_Activity_SetApplicationId.invokeExact(self, value);
 		});
 	}
-	private static MethodHandle _Discord_Client_GetMessageHandle;
-	public static boolean Discord_Client_GetMessageHandle(@$("Discord_Client*") MemorySegment self, long messageId, @$("Discord_MessageHandle*") MemorySegment returnValue) {
-		boolean[] b = new boolean[1];
-		r(() -> {
-			boolean c = (boolean) _Discord_Client_GetMessageHandle.invokeExact(self, messageId, returnValue);
-			b[0] = c;
-		});
-		return b[0];
-	}
-	//bool DISCORD_API Discord_Client_GetMessageHandle(Discord_Client* self,
-	//                                                 uint64_t messageId,
-	//                                                 Discord_MessageHandle* returnValue);
-	public static void Discord_Client_SetApplicationId(MemorySegment self, MemorySegment value) {
-		r(() -> {
-			_Discord_Client_SetApplicationId.invokeExact(self, value);
-		});
-	}
-
-	public static long Discord_Client_GetApplicationId(MemorySegment self) {
-		long[] q = new long[1];
-		r(() -> {
-			long r = (long) _Discord_Client_GetApplicationId.invokeExact(self);
-			q[0] =r;
-		});
-		return q[0];
-	}
 
 	public static void Discord_Activity_SetState(MemorySegment self, String value) {
 		r(() -> {
@@ -575,83 +278,12 @@ public class CDiscord {
 		});
 	}
 
-	public static void Discord_Client_Init(MemorySegment self) {
-		r(() -> {
-			_Discord_Client_Init.invokeExact(self);
-			System.out.println("ran discord client init");
-		});
-	}
-	public static void Discord_Client_Connect(MemorySegment self) {
-		r(() -> {
-			_Discord_Client_Connect.invokeExact(self);
-		});
-	}
-
-
-	public interface Discord_Client_OnStatusChanged {
-		void call(int status, int error, int errorDetail, MemorySegment userData);
-	}
 
 	public interface Discord_FreeFn {
 		void call(MemorySegment ptr);
 	}
-	public static void Discord_Client_SetStatusChangedCallback(MemorySegment self, Discord_Client_OnStatusChanged cb,
-															   Discord_FreeFn cb__userDataFree,
-															   MemorySegment cb__userData) {
-
-		MethodHandle o1 = _Discord_Client_OnStatusChanged$handle.bindTo(cb);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_OnStatusChanged, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_SetStatusChangedCallback.invokeExact(self, cb0, cb1, cb__userData);
-		});
-	}
-
-	public static void Discord_Client_CreateAuthorizationCodeVerifier(MemorySegment self, MemorySegment returnValue) {
-		r(() -> {
-			_Discord_Client_CreateAuthorizationCodeVerifier.invokeExact(self, returnValue);
-		});
-	}
-
-	//void DISCORD_API Discord_Client_Authorize(Discord_Client* self,
-	//                                          Discord_AuthorizationArgs* args,
-	//                                          Discord_Client_AuthorizationCallback callback,
-	//                                          Discord_FreeFn callback__userDataFree,
-	//                                          void* callback__userData);
-
-	public interface Discord_Client_GetLobbyMessagesCallback {
-		void call(@$("Discord_ClientResult*") MemorySegment result, @$("Discord_MessageHandleSpan")/*Discord_MessageHandleSpan struct*/ MemorySegment messages, @$("void*") MemorySegment userData);
-		// Discord_ClientResult* result,
-		//                                                        Discord_MessageHandleSpan messages,
-		//                                                        void* userData
-	}
-	public static void Discord_Client_GetLobbyMessagesWithLimit(@$("Discord_Client*") MemorySegment self, long lobbyId, int limit, Discord_Client_GetLobbyMessagesCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
-		MethodHandle o1 = _Discord_Client_GetLobbyMessagesCallback$handle.bindTo(cb);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_GetLobbyMessagesCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_GetLobbyMessagesWithLimit.invokeExact(self, lobbyId, limit, cb0, cb1, cb__userData);
-		});
-	}
-
-	// void DISCORD_API
-	//Discord_Client_GetLobbyMessagesWithLimit(Discord_Client* self,
-	//                                         uint64_t lobbyId,
-	//                                         int32_t limit,
-	//                                         Discord_Client_GetLobbyMessagesCallback cb,
-	//                                         Discord_FreeFn cb__userDataFree,
-	//                                         void* cb__userData);
-
-	public interface Discord_Client_AuthorizationCallback {
-		void call(@$("Discord_ClientResult*")MemorySegment result, String code, String redirectUri, @$("void*")MemorySegment userData);
-		default void call0(MemorySegment result, MemorySegment code, MemorySegment redirectUri, MemorySegment userData) {
-			call(result, _String_Sugar(code), _String_Sugar(redirectUri), userData);
-		}
 
 
-	}
 	public static String _String_Sugar(MemorySegment code) {
 		VarHandle ptr = _Discord_String.varHandle(MemoryLayout.PathElement.groupElement("ptr"));
 		VarHandle size = _Discord_String.varHandle(MemoryLayout.PathElement.groupElement("size"));
@@ -722,16 +354,6 @@ public class CDiscord {
 		}
 		return Map.copyOf(objects);
 	}
-	public static void Discord_Client_Authorize(@$("Discord_Client*") MemorySegment self, @$("Discord_AuthorizationArgs*") MemorySegment args, Discord_Client_AuthorizationCallback callback,
-												Discord_FreeFn callback__userDataFree, MemorySegment callback__userData) {
-		MethodHandle o1 = _Discord_Client_AuthorizationCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_AuthorizationCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_Authorize.invokeExact(self, args, cb0, cb1, callback__userData);
-		});
-	}
 
 	public static void Discord_AuthorizationArgs_Init(MemorySegment self) {
 		r(() -> {
@@ -753,7 +375,7 @@ public class CDiscord {
 		});
 	}
 
-	private static MemorySegment _DiscordStringFromJavaString(String value) {
+	public static MemorySegment _DiscordStringFromJavaString(String value) {
 		MemorySegment allocate = Arena.ofAuto().allocate(_Discord_String);
 		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 		MemorySegment seg = Arena.ofAuto().allocate(bytes.length);
@@ -788,96 +410,15 @@ public class CDiscord {
 		});
 	}
 
-	public interface Discord_Client_LogCallback {
-		void call(String message, int severity, MemorySegment userData);
-		default void call0(MemorySegment message, int severity, MemorySegment userData) {
-			call(_String_Sugar(message), severity, userData);
-		}
-	}
-	public static void Discord_Client_AddLogCallback(@$("Discord_Client*") MemorySegment self, Discord_Client_LogCallback callback, Discord_FreeFn callback__userDataFree, MemorySegment callback__userData, int minSeverity) {
-
-		MethodHandle o1 = _Discord_Client_LogCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_LogCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_AddLogCallback.invokeExact(self, cb0, cb1, callback__userData, minSeverity);
-		});
-	}
-
-	public interface Discord_Client_UpdateRichPresenceCallback {
-		void call(@$("Discord_ClientResult*") MemorySegment result, @$("void*") MemorySegment userData);
-	}
-
-	public static void Discord_Client_UpdateRichPresence(MemorySegment self, MemorySegment activity, Discord_Client_UpdateRichPresenceCallback cb, Discord_FreeFn cb__userDataFree, MemorySegment cb__userData) {
-		MethodHandle o1 = _Discord_Client_UpdateRichPresenceCallback$handle.bindTo(cb);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_UpdateRichPresenceCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			
-			_Discord_Client_UpdateRichPresence.invokeExact(self, activity, cb0, cb1, cb__userData);
-		});
-	}
-
-//	void DISCORD_API Discord_Client_UpdateRichPresence(Discord_Client* self,
-//                                                   Discord_Activity* activity,
-//                                                   Discord_Client_UpdateRichPresenceCallback cb,
-//                                                   Discord_FreeFn cb__userDataFree,
-//                                                   void* cb__userData);
-
-	public interface Discord_Client_TokenExchangeCallback {
-//Discord_ClientResult* result,
-//                                                     Discord_String accessToken,
-//                                                     Discord_String refreshToken,
-//                                                     Discord_AuthorizationTokenType tokenType,
-//                                                     int32_t expiresIn,
-//                                                     Discord_String scopes,
-//                                                     void* userData
-		void call(@$("Discord_ClientResult*") MemorySegment result, String accessToken, String refreshToken, @$("Discord_AuthorizationTokenType") int tokenType,
-				  int expiresIn, String scopes, @$("void*") MemorySegment userData);
-		default void call0(MemorySegment result, MemorySegment accessToken, MemorySegment refreshToken, int tokenType,
-				  int expiresIn, MemorySegment scopes, MemorySegment userData) {
-			call(result, _String_Sugar(accessToken), _String_Sugar(refreshToken), tokenType, expiresIn, _String_Sugar(scopes), userData);
-		}
-	}
-	public static void Discord_Client_GetToken(@$("Discord_Client*") MemorySegment self, long applicationId, String code, String codeVerifier, String redirectUri, Discord_Client_TokenExchangeCallback callback, Discord_FreeFn callback__userDataFree, @$("void*") MemorySegment callback__userData) {
-		__Discord_Client_GetToken0(self, applicationId, _DiscordStringFromJavaString(code), _DiscordStringFromJavaString(codeVerifier), _DiscordStringFromJavaString(redirectUri), callback, callback__userDataFree, callback__userData);
-	}
-
-	private static void __Discord_Client_GetToken0(MemorySegment self, long applicationId, MemorySegment code, MemorySegment codeVerifier, MemorySegment redirectUri, Discord_Client_TokenExchangeCallback callback, Discord_FreeFn callback__userDataFree, MemorySegment callback__userData) {
-		MethodHandle o1 = _Discord_Client_TokenExchangeCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_TokenExchangeCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_GetToken.invokeExact(self, applicationId, code, codeVerifier, redirectUri, cb0, cb1, callback__userData);
-		});
-	}
 	public static void Discord_AuthorizationCodeVerifier_Verifier(@$("Discord_AuthorizationCodeVerifier*") MemorySegment self, @$("Discord_String*") MemorySegment returnValue) {
 		r(() -> {
 			_Discord_AuthorizationCodeVerifier_Verifier.invokeExact(self, returnValue);
 		});
 	}
 
-	public interface Discord_Client_UpdateTokenCallback {
-		void call(@$("Discord_ClientResult*") MemorySegment result, @$("void*") MemorySegment userData);
-	}
 
-	public static void Discord_Client_UpdateToken(@$("Discord_Client*") MemorySegment self,
-												  @$("Discord_AuthorizationTokenType") int tokenType,
-												  String token,
-												  Discord_Client_UpdateTokenCallback callback,
-												  Discord_FreeFn callback__userDataFree,
-												  @$("void*") MemorySegment callback__user_data) {
-		MethodHandle o1 = _Discord_Client_UpdateTokenCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_UpdateTokenCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_UpdateToken.invokeExact(self, tokenType, _DiscordStringFromJavaString(token), cb0, cb1, callback__user_data);
-		});
-	}
+
+
 	// uint64_t DISCORD_API Discord_RelationshipHandle_Id(Discord_RelationshipHandle* self);
 	public static long Discord_RelationshipHandle_Id(@$("Discord_RelationshipHandle*") MemorySegment self) {
 		long[] r = new long[1];
@@ -915,14 +456,7 @@ public class CDiscord {
 		});
 		return r[0];
 	}
-	// Discord_Client_GetRelationshipsByGroup(Discord_Client* self,
-	//                                       Discord_RelationshipGroupType groupType,
-	//                                       Discord_RelationshipHandleSpan* returnValue);
-	public static void Discord_Client_GetRelationshipsByGroup(@$("Discord_Client*") MemorySegment self, @$("Discord_RelationshipGroupType") int groupType, @$("Discord_RelationshipHandleSpan*") MemorySegment returnValue) {
-		r(() -> {
-			_Discord_Client_GetRelationshipsByGroup.invokeExact(self, groupType, returnValue);
-		});
-	}
+
 
 	public static void Discord_UserHandle_DisplayName(@$("Discord_UserHandle*") MemorySegment self, @$("Discord_String*") MemorySegment returnValue) {
 		r(() -> {
@@ -939,140 +473,8 @@ public class CDiscord {
 		return r[0];
 	}
 
-	public interface Discord_Client_CreateOrJoinLobbyCallback {
-		void call(@$("Discord_ClientResult*") MemorySegment result, long lobbyId, MemorySegment userData);
-	}
-	public static void Discord_Client_CreateOrJoinLobby(@$("Discord_Client*") MemorySegment self, String secret, Discord_Client_CreateOrJoinLobbyCallback callback, Discord_FreeFn callback__userDataFree, MemorySegment callback__userData) {
-		MethodHandle o1 = _Discord_Client_CreateOrJoinLobbyCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_CreateOrJoinLobbyCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			
-			_Discord_Client_CreateOrJoinLobby.invokeExact(self, _DiscordStringFromJavaString(secret), cb0, cb1, callback__userData);
-		});
-	}
-	public interface Discord_Client_LinkOrUnlinkChannelCallback{
-		void call(@$("Discord_ClientResult*") MemorySegment result, MemorySegment userData);
-	}
-	public static void Discord_Client_LinkChannelToLobby(@$("Discord_Client*") MemorySegment self, long lobbyId, long channelId, Discord_Client_LinkOrUnlinkChannelCallback callback, Discord_FreeFn callback__userDataFree, MemorySegment callback__userData) {
-		MethodHandle o1 = _Discord_Client_LinkOrUnlinkChannelCallback$handle.bindTo(callback);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(callback__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_LinkOrUnlinkChannelCallback, Arena.ofAuto());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.ofAuto());
-		r(() -> {
-			
-			_Discord_Client_LinkChannelToLobby.invokeExact(self, lobbyId, channelId, cb0, cb1, callback__userData);
-		});
-	}
-	public interface Discord_Client_SendUserMessageCallback {
-		void call(@$("Discord_ClientResult*") MemorySegment result,
-				  @$("uint64_t") long messageId,
-				  @$("void*") MemorySegment userData);
-	}
-	public static void Discord_Client_SendLobbyMessage(@$("Discord_Client*") MemorySegment self, long lobbyId, String content, Discord_Client_SendUserMessageCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
-		MethodHandle o1 = _Discord_Client_SendUserMessageCallback$handle.bindTo(cb);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_SendUserMessageCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			
-			_Discord_Client_SendLobbyMessage.invokeExact(self, lobbyId, _DiscordStringFromJavaString(content), cb0, cb1, cb__userData);
-		});
-	}
-	private static MethodHandle _Discord_Client_StartCall;
-	public static boolean Discord_Client_StartCall(@$("Discord_Client*") MemorySegment self,
-																 long channelId,
-																 @$("Discord_Call*") MemorySegment returnValue) {
-		boolean[] r = new boolean[1];
-		r(() -> {
-			boolean e = (boolean) _Discord_Client_StartCall.invokeExact(self, channelId, returnValue);
-			r[0] = e;
-		});
-		return r[0];
-	}
-	public interface Discord_Client_MessageCreatedCallback {
-		void call(long messageId, @$("void*") MemorySegment userData);
-		// typedef void (*Discord_Client_MessageCreatedCallback)(uint64_t messageId, void* userData);
-	}
-	public static void Discord_Client_SetMessageCreatedCallback(@$("Discord_Client*") MemorySegment self, Discord_Client_MessageCreatedCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
-		MethodHandle o1 = _Discord_Client_MessageCreatedCallback$handle.bindTo(cb);
-		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
-		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_MessageCreatedCallback, Arena.global());
-		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
-		r(() -> {
-			_Discord_Client_SetMessageCreatedCallback.invokeExact(self, cb0, cb1, cb__userData);
-		});
-	}
-	public static boolean Discord_Client_GetLobbyHandle(@$("Discord_Client*") MemorySegment self, long lobbyId, @$("Discord_LobbyHandle*") MemorySegment returnValue) {
-		boolean[] b = new boolean[1];
-		r(() -> {
-			boolean c = (boolean) _Discord_Client_GetLobbyHandle.invokeExact(self, lobbyId, returnValue);
-			b[0] = c;
-		});
-		return b[0];
-	}
-	// bool DISCORD_API Discord_Client_GetLobbyHandle(Discord_Client* self,
-	//                                               uint64_t lobbyId,
-	//                                               Discord_LobbyHandle* returnValue);
-	// void DISCORD_API Discord_Client_SetMessageCreatedCallback(Discord_Client* self,
-	//                                                          Discord_Client_MessageCreatedCallback cb,
-	//                                                          Discord_FreeFn cb__userDataFree,
-	//                                                          void* cb__userData);
-	// void DISCORD_API Discord_Client_SendLobbyMessage(Discord_Client* self,
-	//                                                 uint64_t lobbyId,
-	//                                                 Discord_String content,
-	//                                                 Discord_Client_SendUserMessageCallback cb,
-	//                                                 Discord_FreeFn cb__userDataFree,
-	//                                                 void* cb__userData);
-	// Discord_Client_LinkChannelToLobby(Discord_Client* self,
-	//                                  uint64_t lobbyId,
-	//                                  uint64_t channelId,
-	//                                  Discord_Client_LinkOrUnlinkChannelCallback callback,
-	//                                  Discord_FreeFn callback__userDataFree,
-	//                                  void* callback__userData);
-	// void DISCORD_API Discord_Client_CreateOrJoinLobby(Discord_Client* self,
-	//                                                  Discord_String secret,
-	//                                                  Discord_Client_CreateOrJoinLobbyCallback callback,
-	//                                                  Discord_FreeFn callback__userDataFree,
-	//                                                  void* callback__userData);
-	// uint64_t DISCORD_API Discord_UserHandle_Id(Discord_UserHandle* self);
 
-	// Discord_RelationshipType DISCORD_API
-	//Discord_RelationshipHandle_DiscordRelationshipType(Discord_RelationshipHandle* self);
-	// void DISCORD_API Discord_UserHandle_DisplayName(Discord_UserHandle* self,
-	//                                                Discord_String* returnValue);
-//	bool DISCORD_API Discord_RelationshipHandle_User(Discord_RelationshipHandle* self,
-//                                                 Discord_UserHandle* returnValue);
-	// void DISCORD_API Discord_Client_UpdateToken(Discord_Client* self,
-	//                                            Discord_AuthorizationTokenType tokenType,
-	//                                            Discord_String token,
-	//                                            Discord_Client_UpdateTokenCallback callback,
-	//                                            Discord_FreeFn callback__userDataFree,
-	//                                            void* callback__userData);
-	// void DISCORD_API Discord_AuthorizationCodeVerifier_Verifier(Discord_AuthorizationCodeVerifier* self,
-	//                                                            Discord_String* returnValue);
-
-//	void DISCORD_API Discord_Client_GetToken(Discord_Client* self,
-//                                         uint64_t applicationId,
-//                                         Discord_String code,
-//                                         Discord_String codeVerifier,
-//                                         Discord_String redirectUri,
-//                                         Discord_Client_TokenExchangeCallback callback,
-//                                         Discord_FreeFn callback__userDataFree,
-//                                         void* callback__userData);
-	// Discord_Client_AddLogCallback
-	//bool DISCORD_API Discord_ClientResult_Successful(Discord_ClientResult* self);
-	//void DISCORD_API
-	//Discord_AuthorizationCodeVerifier_Challenge(Discord_AuthorizationCodeVerifier* self,
-	//                                            Discord_AuthorizationCodeChallenge* returnValue);
-	// void DISCORD_API Discord_AuthorizationArgs_SetScopes(Discord_AuthorizationArgs* self,
-	//                                                     Discord_String value);
-
-//	void DISCORD_API Discord_AuthorizationArgs_SetClientId(Discord_AuthorizationArgs* self,
-//                                                       uint64_t value);
-
-	private static void r(RunnableWithException o) {
+	public static void r(RunnableWithException o) {
 		try {
 			o.run();
 		} catch (Throwable e) {
@@ -1080,10 +482,6 @@ public class CDiscord {
 		}
 	}
 
-	// void DISCORD_API Discord_Client_SetStatusChangedCallback(Discord_Client* self,
-	//                                                         Discord_Client_OnStatusChanged cb,
-	//                                                         Discord_FreeFn cb__userDataFree,
-	//                                                         void* cb__userData);
 	@SuppressWarnings({"UnusedLabel", "unused", "OptionalGetWithoutIsPresent"})
 	public static void setupMessageHandles(Arena arena, SymbolLookup lookup) {
 		Discord_MessageHandle_Drop: {

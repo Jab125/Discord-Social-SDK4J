@@ -19,7 +19,7 @@ import java.util.Locale;
 @Deprecated(forRemoval = true)
 public class DiscordNatives {
 	private static Path nativeLibraryPath;
-	static final Linker LINKER = Linker.nativeLinker();
+	public static final Linker LINKER = Linker.nativeLinker();
 	private static final Platform platform;
 
 	@Deprecated(forRemoval = true)

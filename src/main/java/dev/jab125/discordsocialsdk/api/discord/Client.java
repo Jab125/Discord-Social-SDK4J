@@ -10,6 +10,7 @@ import dev.jab125.discordsocialsdk.api.PointerWrapper;
 import dev.jab125.discordsocialsdk.impl.CDiscord;
 
 import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
+import static dev.jab125.discordsocialsdk.impl.cdiscord.Discord_Client.*;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -130,10 +131,7 @@ public class Client implements PointerWrapper {
 			return _unpack__Discord_UInt64Span(allocated);
 		}
 	}
-	// GetRelationshipsByGroup
-	// std::vector<discordpp::RelationshipHandle> Client::GetRelationshipsByGroup(
-	//  discordpp::RelationshipGroupType groupType) const
-	//{
+
 	public enum RelationshipGroupType {
 		ONLINE_PLAYING_GAME,
 		ONLINE_ELSEWHERE,
