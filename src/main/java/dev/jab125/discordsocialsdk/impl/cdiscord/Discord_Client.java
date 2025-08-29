@@ -8,7 +8,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-import static dev.jab125.discordsocialsdk.impl.*;
 import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 
