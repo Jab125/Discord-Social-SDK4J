@@ -184,6 +184,7 @@ public class Discord_Client {
 	public static MethodHandle _Discord_Client_UpdateToken;
 	public static MethodHandle _Discord_Client_GetLobbyMessagesWithLimit;
 	public static MethodHandle _Discord_Client_GetMessageHandle;
+	public static MethodHandle _Discord_Client_GetUserMessagesWithLimit;
 	public static MethodHandle _Discord_Client_SendLobbyMessage;
 	public static MethodHandle _Discord_Client_SendUserMessage;
 	public static MethodHandle _Discord_Client_SetMessageCreatedCallback;
@@ -207,6 +208,8 @@ public class Discord_Client {
 	private static MethodHandle _Discord_Client_UpdateTokenCallback$handle;
 	private static FunctionDescriptor _Discord_Client_GetLobbyMessagesCallback;
 	private static MethodHandle _Discord_Client_GetLobbyMessagesCallback$handle;
+	private static FunctionDescriptor _Discord_Client_UserMessagesCallback;
+	private static MethodHandle _Discord_Client_UserMessagesCallback$handle;
 	private static FunctionDescriptor _Discord_Client_SendUserMessageCallback;
 	private static MethodHandle _Discord_Client_SendUserMessageCallback$handle;
 	private static FunctionDescriptor _Discord_Client_MessageCreatedCallback;
@@ -331,6 +334,18 @@ public class Discord_Client {
 			MemorySegment functionAddress = lookup.find("Discord_Client_GetMessageHandle").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
 			_Discord_Client_GetMessageHandle = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_GetUserMessagesWithLimit: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetUserMessagesWithLimit").get();
+			_Discord_Client_UserMessagesCallback = FunctionDescriptor.ofVoid(
+					ValueLayout.ADDRESS,
+					_Discord_MessageHandleSpan,
+					ValueLayout.ADDRESS);
+			_Discord_Client_UserMessagesCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetLobbyMessagesCallback.class, "call",
+					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
+
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			_Discord_Client_GetUserMessagesWithLimit = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_SendLobbyMessage: {
 			_Discord_Client_SendUserMessageCallback = FunctionDescriptor.ofVoid(
@@ -585,6 +600,18 @@ public class Discord_Client {
 			b[0] = c;
 		});
 		return b[0];
+	}
+	public interface Discord_Client_UserMessagesWithLimitCallback {
+		void call(@$("Discord_ClientResult*") MemorySegment result, @$("Discord_MessageHandleSpan") MemorySegment messages, @$("void*") MemorySegment userData);
+	}
+	public static void Discord_Client_GetUserMessagesWithLimit(@$("Discord_Client*") MemorySegment self, long recipientId, int limit, Discord_Client_UserMessagesWithLimitCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
+		MethodHandle o1 = _Discord_Client_UserMessagesCallback$handle.bindTo(cb);
+		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
+		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_UserMessagesCallback, Arena.global());
+		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
+		r(() -> {
+			_Discord_Client_GetUserMessagesWithLimit.invokeExact(self, recipientId, limit, cb0, cb1, cb__userData);
+		});
 	}
 	public interface Discord_Client_SendUserMessageCallback {
 		void call(@$("Discord_ClientResult*") MemorySegment result,

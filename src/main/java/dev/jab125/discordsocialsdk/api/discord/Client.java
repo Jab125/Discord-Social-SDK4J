@@ -80,6 +80,12 @@ public class Client implements PointerWrapper {
 		if (!Discord_Client_GetMessageHandle(instance, messageId, handle)) return Optional.empty();
 		return Optional.of(new MessageHandle(handle));
 	}
+	public interface UserMessagesWithLimitCallback {
+		void call(ClientResult result, List<MessageHandle> messages);
+	}
+	public void getUserMessagesWithLimit(long recipientId, int limit, UserMessagesWithLimitCallback cb) {
+		Discord_Client_GetUserMessagesWithLimit(instance, recipientId, limit, (result, messages, userData) -> cb.call(new ClientResult(result), _unpack__Discord_MessageHandleSpan(messages).stream().map(MessageHandle::new).toList()), ptr -> {}, MemorySegment.NULL);
+	}
 	public interface SendUserMessageCallback {
 		void call(ClientResult result, long messageId);
 	}
