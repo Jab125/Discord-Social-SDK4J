@@ -20,7 +20,7 @@ jobs:
           java-version: '22'
           distribution: 'temurin'
       - name: install libsound2, libatomic1, and libpulse0
-        run: apt-get update && apt-get install libasound2t64 libatomic1 libpulse0 -y
+        run: sudo apt-get update && apt-get install libasound2t64 libatomic1 libpulse0 -y
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: test
