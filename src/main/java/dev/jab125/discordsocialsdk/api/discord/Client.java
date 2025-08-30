@@ -33,6 +33,15 @@ public class Client implements PointerWrapper {
 		// TODO hook into the SDK to get the result of this method
 		return "openid sdk.social_layer_presence";
 	}
+	public int getVersionMajor() {
+		return Discord_Client_GetVersionMajor();
+	}
+	public int getVersionMinor() {
+		return Discord_Client_GetVersionMinor();
+	}
+	public int getVersionPatch() {
+		return Discord_Client_GetVersionPatch();
+	}
 	public interface AuthorizationCallback {
 		void call(ClientResult result, String code, String redirectUri);
 	}

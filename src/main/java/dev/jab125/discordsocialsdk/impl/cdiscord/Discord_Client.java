@@ -174,6 +174,9 @@ import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 public class Discord_Client {
 	public static MethodHandle _Discord_Client_Init;
 	public static MethodHandle _Discord_Client_GetApplicationId;
+	public static MethodHandle _Discord_Client_GetVersionMajor;
+	public static MethodHandle _Discord_Client_GetVersionMinor;
+	public static MethodHandle _Discord_Client_GetVersionPatch;
 	public static MethodHandle _Discord_Client_StartCall;
 	public static MethodHandle _Discord_Client_Authorize;
 	public static MethodHandle _Discord_Client_CreateAuthorizationCodeVerifier;
@@ -229,6 +232,21 @@ public class Discord_Client {
 			MemorySegment functionAddress = lookup.find("Discord_Client_GetApplicationId").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
 			_Discord_Client_GetApplicationId = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_GetVersionMajor: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetVersionMajor").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_INT);
+			_Discord_Client_GetVersionMajor = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_GetVersionMinor: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetVersionMinor").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_INT);
+			_Discord_Client_GetVersionMinor = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_GetVersionPatch: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetVersionPatch").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_INT);
+			_Discord_Client_GetVersionPatch = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_StartCall: {
 			MemorySegment functionAddress = lookup.find("Discord_Client_StartCall").get();
@@ -449,6 +467,30 @@ public class Discord_Client {
 		long[] q = new long[1];
 		r(() -> {
 			long r = (long) _Discord_Client_GetApplicationId.invokeExact(self);
+			q[0] =r;
+		});
+		return q[0];
+	}
+	public static int Discord_Client_GetVersionMajor() {
+		int[] q = new int[1];
+		r(() -> {
+			int r = (int) _Discord_Client_GetVersionMajor.invokeExact();
+			q[0] =r;
+		});
+		return q[0];
+	}
+	public static int Discord_Client_GetVersionMinor() {
+		int[] q = new int[1];
+		r(() -> {
+			int r = (int) _Discord_Client_GetVersionMinor.invokeExact();
+			q[0] =r;
+		});
+		return q[0];
+	}
+	public static int Discord_Client_GetVersionPatch() {
+		int[] q = new int[1];
+		r(() -> {
+			int r = (int) _Discord_Client_GetVersionPatch.invokeExact();
 			q[0] =r;
 		});
 		return q[0];
