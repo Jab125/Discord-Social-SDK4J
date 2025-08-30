@@ -184,6 +184,11 @@ public class Client implements PointerWrapper {
 		Discord_Client_GetRelationshipsByGroup(instance, groupType.ordinal(), memorySegment);
 		return _unpack__Discord_RelationshipHandleSpan(memorySegment).stream().map(RelationshipHandle::new).toList();
 	}
+	public Optional<UserHandle> getUser(long userId) {
+		@$("Discord_UserHandle*") MemorySegment handle = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		if (!Discord_Client_GetUser(instance, userId, handle)) return Optional.empty();
+		return Optional.of(new UserHandle(handle));
+	}
 
 	@Override
 	public MemorySegment getSegment() {

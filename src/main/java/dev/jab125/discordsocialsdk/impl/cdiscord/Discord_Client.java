@@ -199,6 +199,7 @@ public class Discord_Client {
 	public static MethodHandle _Discord_Client_UpdateRichPresence;
 	public static MethodHandle _Discord_Client_GetRelationships;
 	public static MethodHandle _Discord_Client_GetRelationshipsByGroup;
+	public static MethodHandle _Discord_Client_GetUser;
 
 	private static FunctionDescriptor _Discord_Client_AuthorizationCallback;
 	private static MethodHandle _Discord_Client_AuthorizationCallback$handle;
@@ -476,6 +477,11 @@ public class Discord_Client {
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS);
 			_Discord_Client_GetRelationshipsByGroup = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
+		Discord_Client_GetUser: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetUser").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.of(ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS);
+			_Discord_Client_GetUser = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
 	}
 
 	public static void Discord_Client_Init(MemorySegment self) {
@@ -749,5 +755,13 @@ public class Discord_Client {
 		r(() -> {
 			_Discord_Client_GetRelationshipsByGroup.invokeExact(self, groupType, returnValue);
 		});
+	}
+	public static boolean Discord_Client_GetUser(@$("Discord_Client*") MemorySegment self, long userId, @$("Discord_UserHandle*") MemorySegment returnValue) {
+		boolean[] b = new boolean[1];
+		r(() -> {
+			boolean c = (boolean) _Discord_Client_GetUser.invokeExact(self, userId, returnValue);
+			b[0] = c;
+		});
+		return b[0];
 	}
 }
