@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.jab125"
-version = "0.0.23"
+version = "0.0.24"
 
 repositories {
     mavenCentral()
@@ -29,6 +29,8 @@ if (secretSauce != null) {
     if (!file("secretSauce.gradle").exists()) {
         Files.copy(URI.create(secretSauce!!).toURL().openStream(), file("secretSauce.gradle").toPath())
     }
+}
+if (file("secretSauce.gradle").exists()) {
     apply(from = "secretSauce.gradle")
 }
 
