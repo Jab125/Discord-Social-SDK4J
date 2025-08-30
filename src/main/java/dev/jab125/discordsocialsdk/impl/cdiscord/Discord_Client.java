@@ -342,7 +342,7 @@ public class Discord_Client {
 					ValueLayout.ADDRESS,
 					_Discord_MessageHandleSpan,
 					ValueLayout.ADDRESS);
-			_Discord_Client_UserMessagesCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetLobbyMessagesCallback.class, "call",
+			_Discord_Client_UserMessagesCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_UserMessagesWithLimitCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
 
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
