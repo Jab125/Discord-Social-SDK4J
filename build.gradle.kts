@@ -1,3 +1,6 @@
+import java.net.URI
+import java.nio.file.Files
+
 // Copyright 2025 Jab125
 // This file is part of Discord-Social-SDK4J.
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -20,6 +23,15 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
+
+var secretSauce: String? = System.getenv("secretSauce")
+if (secretSauce != null) {
+    if (!file("secretSauce.gradle").exists()) {
+        Files.copy(URI.create(secretSauce!!).toURL().openStream(), file("secretSauce.gradle").toPath())
+    }
+    apply(from = "secretSauce.gradle")
+}
+
 
 tasks.test {
     useJUnitPlatform()
