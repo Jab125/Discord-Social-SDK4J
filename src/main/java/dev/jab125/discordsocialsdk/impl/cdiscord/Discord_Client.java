@@ -185,6 +185,7 @@ public class Discord_Client {
 	public static MethodHandle _Discord_Client_GetLobbyMessagesWithLimit;
 	public static MethodHandle _Discord_Client_GetMessageHandle;
 	public static MethodHandle _Discord_Client_SendLobbyMessage;
+	public static MethodHandle _Discord_Client_SendUserMessage;
 	public static MethodHandle _Discord_Client_SetMessageCreatedCallback;
 	public static MethodHandle _Discord_Client_AddLogCallback;
 	public static MethodHandle _Discord_Client_Connect;
@@ -341,6 +342,11 @@ public class Discord_Client {
 			MemorySegment functionAddress = lookup.find("Discord_Client_SendLobbyMessage").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Client_SendLobbyMessage = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_SendUserMessage: {
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			MemorySegment functionAddress = lookup.find("Discord_Client_SendUserMessage").get();
+			_Discord_Client_SendUserMessage = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_SetMessageCreatedCallback: {
 			_Discord_Client_MessageCreatedCallback = FunctionDescriptor.ofVoid(
@@ -593,6 +599,16 @@ public class Discord_Client {
 		r(() -> {
 
 			_Discord_Client_SendLobbyMessage.invokeExact(self, lobbyId, _DiscordStringFromJavaString(content), cb0, cb1, cb__userData);
+		});
+	}
+	public static void Discord_Client_SendUserMessage(@$("Discord_Client*") MemorySegment self, long recipientId, String content, Discord_Client_SendUserMessageCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
+		MethodHandle o1 = _Discord_Client_SendUserMessageCallback$handle.bindTo(cb);
+		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
+		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_SendUserMessageCallback, Arena.global());
+		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
+		r(() -> {
+
+			_Discord_Client_SendUserMessage.invokeExact(self, recipientId, _DiscordStringFromJavaString(content), cb0, cb1, cb__userData);
 		});
 	}
 	public interface Discord_Client_MessageCreatedCallback {

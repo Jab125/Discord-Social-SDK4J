@@ -86,6 +86,9 @@ public class Client implements PointerWrapper {
 	public void sendLobbyMessage(long lobbyId, String message, SendUserMessageCallback cb) {
 		Discord_Client_SendLobbyMessage(instance, lobbyId, message, (result, messageId, userData) -> cb.call(new ClientResult(result), messageId), ptr -> {}, MemorySegment.NULL);
 	}
+	public void sendUserMessage(long recipientId, String message, SendUserMessageCallback cb) {
+		Discord_Client_SendUserMessage(instance, recipientId, message, (result, messageId, userData) -> cb.call(new ClientResult(result), messageId), ptr -> {}, MemorySegment.NULL);
+	}
 	public interface MessageCreatedCallback {
 		void call(long messageId);
 	}
