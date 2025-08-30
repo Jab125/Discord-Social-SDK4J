@@ -1,6 +1,6 @@
 @SuppressWarnings("JavaModuleNaming")
 module dev.jab125.discordsocialsdk {
-	requires org.jetbrains.annotations;
+	requires static org.jetbrains.annotations;
 	requires java.base;
 
 	exports dev.jab125.discordsocialsdk.api;
