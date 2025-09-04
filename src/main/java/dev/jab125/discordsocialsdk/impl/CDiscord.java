@@ -48,6 +48,7 @@ public class CDiscord {
 	private static MethodHandle _Discord_RelationshipHandle_DiscordRelationshipType;
 	private static MethodHandle _Discord_UserHandle_Id;
 	public static StructLayout _Discord_MessageHandleSpan;
+	public static StructLayout _Discord_GuildMinimalSpan;
 	public static StructLayout _Discord_UInt64Span;
 	public static StructLayout _Discord_Properties;
 	private static MethodHandle _Discord_RelationshipHandle_GameRelationshipType;
@@ -108,6 +109,9 @@ public class CDiscord {
 		//
 		Discord_MessageHandleSpan: {
 			_Discord_MessageHandleSpan = MemoryLayout.structLayout(ValueLayout.ADDRESS.withName("ptr"), ValueLayout.JAVA_LONG.withName("size"));
+		}
+		Discord_GuildMinimalSpan: {
+			_Discord_GuildMinimalSpan = MemoryLayout.structLayout(ValueLayout.ADDRESS.withName("ptr"), ValueLayout.JAVA_LONG.withName("size"));
 		}
 		Discord_RelationshipHandle_Id: {
 			MemorySegment functionAddress = lookup.find("Discord_RelationshipHandle_Id").get();
@@ -310,6 +314,19 @@ public class CDiscord {
 	public static List<MemorySegment> _unpack__Discord_MessageHandleSpan(MemorySegment code) {
 		VarHandle ptr = _Discord_MessageHandleSpan.varHandle(MemoryLayout.PathElement.groupElement("ptr"));
 		VarHandle size = _Discord_MessageHandleSpan.varHandle(MemoryLayout.PathElement.groupElement("size"));
+		long size2 = (long) size.get(code,0);
+		MemorySegment segment = (MemorySegment) ptr.get(code, 0);
+		ArrayList<MemorySegment> objects = new ArrayList<>();
+		for (long l = 0; l < size2; l++) {
+			long address = segment.address();
+			MemorySegment memorySegment = MemorySegment.ofAddress(address+(l*ValueLayout.ADDRESS.byteSize()));
+			objects.add(memorySegment);
+		}
+		return List.copyOf(objects);
+	}
+	public static List<MemorySegment> _unpack__Discord_GuildMinimalSpan(MemorySegment code) {
+		VarHandle ptr = _Discord_GuildMinimalSpan.varHandle(MemoryLayout.PathElement.groupElement("ptr"));
+		VarHandle size = _Discord_GuildMinimalSpan.varHandle(MemoryLayout.PathElement.groupElement("size"));
 		long size2 = (long) size.get(code,0);
 		MemorySegment segment = (MemorySegment) ptr.get(code, 0);
 		ArrayList<MemorySegment> objects = new ArrayList<>();

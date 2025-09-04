@@ -169,6 +169,12 @@ public class Client implements PointerWrapper {
 			return _unpack__Discord_UInt64Span(allocated);
 		}
 	}
+	public interface GetUserGuildsCallback {
+		void call(ClientResult result, List<GuildMinimal> guilds);
+	}
+	public void getUserGuilds(GetUserGuildsCallback cb) {
+		Discord_Client_GetUserGuilds(instance, (result, guilds, userData) -> cb.call(new ClientResult(result), _unpack__Discord_GuildMinimalSpan(guilds).stream().map(GuildMinimal::new).toList()), ptr -> {}, MemorySegment.NULL);
+	}
 	public interface LinkOrUnlinkChannelCallback {
 		void call(ClientResult result);
 	}
