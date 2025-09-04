@@ -19,7 +19,7 @@ public interface NativesDiscoverer {
 			case MACOS -> "/osx/libdiscord_partner_sdk.dylib";
 			case WINDOWS_X86 -> "/windows/discord_partner_sdk.dll";
 			case WINDOWS_ARM -> "/windows/discord_partner_sdk_arm.dll";
-			case LINUX_X86, LINUX_ARM -> "/linux/libdiscord_partner_sdk.so"; // TODO someone let me know if it doesn't work on ARM
+			case LINUX_X86 -> "/linux/libdiscord_partner_sdk.so";
 			default -> throw new Exception("Library for " + platform + " not supported!");
 		};
 		Path tempFile = Files.createTempFile("l", "." + path.split("\\.")[1]);

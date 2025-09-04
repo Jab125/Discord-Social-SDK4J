@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.jab125"
-version = "0.0.30"
+version = "0.0.31"
 
 repositories {
     mavenCentral()
@@ -51,7 +51,7 @@ java {
 publishing {
     publications {
         val d = create("mavenJava", MavenPublication::class) {
-            artifactId = "discord-social-sdk"
+            artifactId = "discord-social-sdk4j"
             from(components.getByName("java"))
         }
 
