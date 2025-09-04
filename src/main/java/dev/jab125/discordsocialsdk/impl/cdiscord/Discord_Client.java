@@ -484,7 +484,7 @@ public class Discord_Client {
 			_Discord_Client_GetUserGuildsCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetUserGuildsCallback.class, "call",
 					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
 
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Client_GetUserGuilds = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_LinkChannelToLobby: {
