@@ -188,6 +188,8 @@ public class Discord_Client {
 	public static MethodHandle _Discord_Client_SendLobbyMessage;
 	public static MethodHandle _Discord_Client_SendUserMessage;
 	public static MethodHandle _Discord_Client_SetMessageCreatedCallback;
+	public static MethodHandle _Discord_Client_SetMessageDeletedCallback;
+	public static MethodHandle _Discord_Client_SetMessageUpdatedCallback;
 	public static MethodHandle _Discord_Client_AddLogCallback;
 	public static MethodHandle _Discord_Client_Connect;
 	public static MethodHandle _Discord_Client_SetApplicationId;
@@ -215,6 +217,10 @@ public class Discord_Client {
 	private static MethodHandle _Discord_Client_SendUserMessageCallback$handle;
 	private static FunctionDescriptor _Discord_Client_MessageCreatedCallback;
 	private static MethodHandle _Discord_Client_MessageCreatedCallback$handle;
+	private static FunctionDescriptor _Discord_Client_MessageDeletedCallback;
+	private static MethodHandle _Discord_Client_MessageDeletedCallback$handle;
+	private static FunctionDescriptor _Discord_Client_MessageUpdatedCallback;
+	private static MethodHandle _Discord_Client_MessageUpdatedCallback$handle;
 	private static FunctionDescriptor _Discord_Client_LogCallback;
 	private static MethodHandle _Discord_Client_LogCallback$handle;
 	private static FunctionDescriptor _Discord_Client_OnStatusChanged;
@@ -373,6 +379,27 @@ public class Discord_Client {
 			MemorySegment functionAddress = lookup.find("Discord_Client_SetMessageCreatedCallback").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Client_SetMessageCreatedCallback = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_SetMessageDeletedCallback: {
+			_Discord_Client_MessageDeletedCallback = FunctionDescriptor.ofVoid(
+					ValueLayout.JAVA_LONG,
+					ValueLayout.JAVA_LONG,
+					ValueLayout.ADDRESS);
+			_Discord_Client_MessageDeletedCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_MessageDeletedCallback.class, "call",
+					MethodType.methodType(void.class, long.class, long.class, MemorySegment.class));
+			MemorySegment functionAddress = lookup.find("Discord_Client_SetMessageDeletedCallback").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			_Discord_Client_SetMessageDeletedCallback = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_SetMessageUpdatedCallback: {
+			_Discord_Client_MessageUpdatedCallback = FunctionDescriptor.ofVoid(
+					ValueLayout.JAVA_LONG,
+					ValueLayout.ADDRESS);
+			_Discord_Client_MessageUpdatedCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_MessageUpdatedCallback.class, "call",
+					MethodType.methodType(void.class, long.class, MemorySegment.class));
+			MemorySegment functionAddress = lookup.find("Discord_Client_SetMessageUpdatedCallback").get();
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			_Discord_Client_SetMessageUpdatedCallback = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_AddLogCallback: {
 			MemorySegment functionAddress = lookup.find("Discord_Client_AddLogCallback").get();
@@ -654,6 +681,30 @@ public class Discord_Client {
 		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
 		r(() -> {
 			_Discord_Client_SetMessageCreatedCallback.invokeExact(self, cb0, cb1, cb__userData);
+		});
+	}
+	public interface Discord_Client_MessageDeletedCallback {
+		void call(long messageId, long channelId, @$("void*") MemorySegment userData);
+	}
+	public static void Discord_Client_SetMessageDeletedCallback(@$("Discord_Client*") MemorySegment self, Discord_Client_MessageDeletedCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
+		MethodHandle o1 = _Discord_Client_MessageDeletedCallback$handle.bindTo(cb);
+		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
+		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_MessageDeletedCallback, Arena.global());
+		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
+		r(() -> {
+			_Discord_Client_SetMessageDeletedCallback.invokeExact(self, cb0, cb1, cb__userData);
+		});
+	}
+	public interface Discord_Client_MessageUpdatedCallback {
+		void call(long messageId, @$("void*") MemorySegment userData);
+	}
+	public static void Discord_Client_SetMessageUpdatedCallback(@$("Discord_Client*") MemorySegment self, Discord_Client_MessageUpdatedCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
+		MethodHandle o1 = _Discord_Client_MessageUpdatedCallback$handle.bindTo(cb);
+		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
+		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_MessageUpdatedCallback, Arena.global());
+		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
+		r(() -> {
+			_Discord_Client_SetMessageUpdatedCallback.invokeExact(self, cb0, cb1, cb__userData);
 		});
 	}
 	public interface Discord_Client_LogCallback {

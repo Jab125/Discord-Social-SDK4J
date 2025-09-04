@@ -101,6 +101,18 @@ public class Client implements PointerWrapper {
 	public void setMessageCreatedCallback(MessageCreatedCallback cb) {
 		Discord_Client_SetMessageCreatedCallback(instance, (messageId, userData) -> cb.call(messageId), ptr -> {}, MemorySegment.NULL);
 	}
+	public interface MessageDeletedCallback {
+		void call(long messageId, long channelId);
+	}
+	public void setMessageDeletedCallback(MessageDeletedCallback cb) {
+		Discord_Client_SetMessageDeletedCallback(instance, (messageId, channelId, userData) -> cb.call(messageId, channelId), ptr -> {}, MemorySegment.NULL);
+	}
+	public interface MessageUpdatedCallback {
+		void call(long messageId);
+	}
+	public void setMessageUpdatedCallback(MessageUpdatedCallback cb) {
+		Discord_Client_SetMessageUpdatedCallback(instance, (messageId, userData) -> cb.call(messageId), ptr -> {}, MemorySegment.NULL);
+	}
 	public enum LoggingSeverity {
 		VERBOSE,
 		INFO,
