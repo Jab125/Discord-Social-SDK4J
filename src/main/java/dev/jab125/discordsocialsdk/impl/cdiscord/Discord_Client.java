@@ -195,6 +195,7 @@ public class Discord_Client {
 	public static MethodHandle _Discord_Client_SetApplicationId;
 	public static MethodHandle _Discord_Client_SetStatusChangedCallback;
 	public static MethodHandle _Discord_Client_CreateOrJoinLobby;
+	public static MethodHandle _Discord_Client_GetGuildChannels;
 	public static MethodHandle _Discord_Client_GetLobbyHandle;
 	public static MethodHandle _Discord_Client_GetLobbyIds;
 	public static MethodHandle _Discord_Client_GetUserGuilds;
@@ -228,6 +229,8 @@ public class Discord_Client {
 	private static MethodHandle _Discord_Client_OnStatusChanged$handle;
 	private static FunctionDescriptor _Discord_Client_CreateOrJoinLobbyCallback;
 	private static MethodHandle _Discord_Client_CreateOrJoinLobbyCallback$handle;
+	private static FunctionDescriptor _Discord_Client_GetGuildChannelsCallback;
+	private static MethodHandle _Discord_Client_GetGuildChannelsCallback$handle;
 	private static FunctionDescriptor _Discord_Client_GetUserGuildsCallback;
 	private static MethodHandle _Discord_Client_GetUserGuildsCallback$handle;
 	private static FunctionDescriptor _Discord_Client_LinkOrUnlinkChannelCallback;
@@ -464,6 +467,18 @@ public class Discord_Client {
 			MemorySegment functionAddress = lookup.find("Discord_Client_CreateOrJoinLobby").get();
 			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, _Discord_String, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_Client_CreateOrJoinLobby = LINKER.downcallHandle(functionAddress, functionSignature);
+		}
+		Discord_Client_GetGuildChannels: {
+			MemorySegment functionAddress = lookup.find("Discord_Client_GetGuildChannels").get();
+			_Discord_Client_GetGuildChannelsCallback = FunctionDescriptor.ofVoid(
+					ValueLayout.ADDRESS,
+					_Discord_GuildChannelSpan,
+					ValueLayout.ADDRESS);
+			_Discord_Client_GetGuildChannelsCallback$handle = MethodHandles.lookup().findVirtual(Discord_Client_GetGuildChannelsCallback.class, "call",
+					MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class, MemorySegment.class));
+
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS);
+			_Discord_Client_GetGuildChannels = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_Client_GetLobbyHandle: {
 			MemorySegment functionAddress = lookup.find("Discord_Client_GetLobbyHandle").get();
@@ -773,6 +788,18 @@ public class Discord_Client {
 		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
 		r(() -> {
 			_Discord_Client_CreateOrJoinLobby.invokeExact(self, _DiscordStringFromJavaString(secret), cb0, cb1, callback__userData);
+		});
+	}
+	public interface Discord_Client_GetGuildChannelsCallback {
+		void call(@$("Discord_ClientResult*") MemorySegment result, @$("Discord_GuildChannelSpan") MemorySegment guildChannels, @$("void*") MemorySegment userData);
+	}
+	public static void Discord_Client_GetGuildChannels(@$("Discord_Client*") MemorySegment self, long guildId, Discord_Client_GetGuildChannelsCallback cb, Discord_FreeFn cb__userDataFree, @$("void*") MemorySegment cb__userData) {
+		MethodHandle o1 = _Discord_Client_GetGuildChannelsCallback$handle.bindTo(cb);
+		MethodHandle o2 = _Discord_FreeFn$handle.bindTo(cb__userDataFree);
+		MemorySegment cb0 = LINKER.upcallStub(o1, _Discord_Client_GetGuildChannelsCallback, Arena.global());
+		MemorySegment cb1 = LINKER.upcallStub(o2, _Discord_FreeFn, Arena.global());
+		r(() -> {
+			_Discord_Client_GetGuildChannels.invokeExact(self, guildId, cb0, cb1, cb__userData);
 		});
 	}
 	public static boolean Discord_Client_GetLobbyHandle(@$("Discord_Client*") MemorySegment self, long lobbyId, @$("Discord_LobbyHandle*") MemorySegment returnValue) {
