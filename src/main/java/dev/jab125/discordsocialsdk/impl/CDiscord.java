@@ -21,6 +21,7 @@ import java.util.Map;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.LINKER;
 import static dev.jab125.discordsocialsdk.impl.DiscordNatives.lookup;
 import static dev.jab125.discordsocialsdk.impl.cdiscord.Discord_Client.setupDiscordClient;
+import static dev.jab125.discordsocialsdk.impl.cdiscord.Discord_GuildChannel.setupGuildChannels;
 import static dev.jab125.discordsocialsdk.impl.cdiscord.Discord_GuildMinimal.setupGuildMinimals;
 
 @SuppressWarnings({"removal", "CodeBlock2Expr"})
@@ -233,6 +234,7 @@ public class CDiscord {
 		setupLobbyHandles(arena, lookup);
 		setupLinkedChannels(arena, lookup);
 		setupDiscordClient(arena, lookup);
+		setupGuildChannels(arena, lookup);
 		setupGuildMinimals(arena, lookup);
 	}
 
