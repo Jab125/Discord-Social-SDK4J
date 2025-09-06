@@ -160,8 +160,8 @@ public class Client implements PointerWrapper {
 	public interface GetGuildChannelsCallback {
 		void call(ClientResult result, List<GuildChannel> guildChannels);
 	}
-	public void getGuildChannels(long lobbyId, GetGuildChannelsCallback cb) {
-		Discord_Client_GetGuildChannels(instance, lobbyId, (result, guildChannels, userData) -> cb.call(new ClientResult(result), _unpack__Discord_GuildChannelSpan(guildChannels).stream().map(GuildChannel::new).toList()), ptr -> {}, MemorySegment.NULL);
+	public void getGuildChannels(long guildId, GetGuildChannelsCallback cb) {
+		Discord_Client_GetGuildChannels(instance, guildId, (result, guildChannels, userData) -> cb.call(new ClientResult(result), _unpack__Discord_GuildChannelSpan(guildChannels).stream().map(GuildChannel::new).toList()), ptr -> {}, MemorySegment.NULL);
 	}
 	public Optional<LobbyHandle> getLobbyHandle(long lobbyId) {
 		@$("Discord_LobbyHandle*") MemorySegment handle = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
