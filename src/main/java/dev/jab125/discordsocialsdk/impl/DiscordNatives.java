@@ -23,10 +23,19 @@ public class DiscordNatives {
 	private static final Platform platform;
 
 	@Deprecated(forRemoval = true)
+	public static boolean nativesAlreadyLoaded() {
+		return nativeLibraryPath != null;
+	}
+
+	@Deprecated(forRemoval = true)
 	public static boolean loadNatives0(NativesDiscoverer discoverer) {
 		try {
-			nativeLibraryPath = discoverer.getLibraryPath(platform);
-			System.load(nativeLibraryPath.toAbsolutePath().toString());
+			if (nativesAlreadyLoaded()) {
+				throw new IllegalStateException("Natives already loaded!");
+			}
+			Path libraryPath = discoverer.getLibraryPath(platform).toAbsolutePath();
+			System.load(libraryPath.toString());
+			nativeLibraryPath = libraryPath;
 			return true;
 		} catch (Throwable t) {
 			discoverer.error(t);
