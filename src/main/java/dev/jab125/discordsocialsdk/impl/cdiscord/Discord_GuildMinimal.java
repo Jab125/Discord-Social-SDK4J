@@ -31,7 +31,7 @@ public class Discord_GuildMinimal {
 		}
 		Discord_GuildMinimal_Clone: {
 			MemorySegment functionAddress = lookup.find("Discord_GuildMinimal_Clone").get();
-			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS);
+			FunctionDescriptor functionSignature = FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS);
 			_Discord_GuildMinimal_Clone = LINKER.downcallHandle(functionAddress, functionSignature);
 		}
 		Discord_GuildMinimal_SetId: {
@@ -61,9 +61,9 @@ public class Discord_GuildMinimal {
 			_Discord_GuildMinimal_Drop.invokeExact(self);
 		});
 	}
-	public static void Discord_GuildMinimal_Clone(@$("Discord_GuildMinimal*") MemorySegment self) {
+	public static void Discord_GuildMinimal_Clone(@$("Discord_GuildMinimal*") MemorySegment self, @$("Discord_GuildMinimal*") MemorySegment arg0) {
 		r(() -> {
-			_Discord_GuildMinimal_Clone.invokeExact(self);
+			_Discord_GuildMinimal_Clone.invokeExact(self, arg0);
 		});
 	}
 	public static void Discord_GuildMinimal_SetId(@$("Discord_GuildMinimal*") MemorySegment self, long value) {
