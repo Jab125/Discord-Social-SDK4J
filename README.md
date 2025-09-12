@@ -2,6 +2,8 @@
 
 Discord-Social-SDK4J is a project that aims to make easy-to-use bindings for Discord Social SDK.
 
+<b><a href="https://discord.gg/hEqwGQtWDs">Discord</a></b> 
+
 ## Examples
 
 #### Java port of [Getting Started with C++ and the Discord Social SDK](https://discord.com/developers/docs/discord-social-sdk/getting-started/using-c++)
