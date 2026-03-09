@@ -21,6 +21,9 @@ public class Activity implements PointerWrapper {
 		this.instance = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
 		Discord_Activity_Init(instance);
 	}
+	public Activity(MemorySegment segment) {
+		this.instance = segment;
+	}
 
 	/// @deprecated
 	public void setApplicationId(long applicationId) {
