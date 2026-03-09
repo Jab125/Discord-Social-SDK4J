@@ -56,7 +56,7 @@ public class Client implements PointerWrapper {
 			return CrosshairUtils.toJavaString(allocate);
 		}
 	}
-	public String getDefaultPresenceScopes() {
+	public static String getDefaultPresenceScopes() {
 		try (Arena arena = Arena.ofConfined()) {
 			MemorySegment allocate = arena.allocate(Discord_String.layout());
 			Discord_Client_GetDefaultPresenceScopes(allocate);
@@ -70,13 +70,13 @@ public class Client implements PointerWrapper {
 			return CrosshairUtils.toJavaString(allocate);
 		}
 	}
-	public int getVersionMajor() {
+	public static int getVersionMajor() {
 		return Discord_Client_GetVersionMajor.makeInvoker().apply();
 	}
-	public int getVersionMinor() {
+	public static int getVersionMinor() {
 		return Discord_Client_GetVersionMinor.makeInvoker().apply();
 	}
-	public int getVersionPatch() {
+	public static int getVersionPatch() {
 		return Discord_Client_GetVersionPatch.makeInvoker().apply();
 	}
 	public void setHttpRequestTimeout(int httpTimeoutInMilliseconds) {
@@ -90,7 +90,6 @@ public class Client implements PointerWrapper {
 			return CrosshairUtils.toJavaString(allocate);
 		}
 	}
-	/*
 	@Discouraged("use Thread#toString()")
 	public static String threadToString(Thread type) {
 		try (Arena arena = Arena.ofConfined()) {
@@ -99,7 +98,6 @@ public class Client implements PointerWrapper {
 			return CrosshairUtils.toJavaString(allocate);
 		}
 	}
-	 */
 	// TODO EndCall
 	//  EndCalls
 	//  GetCall
