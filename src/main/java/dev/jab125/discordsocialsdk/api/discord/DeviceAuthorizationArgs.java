@@ -8,18 +8,35 @@ package dev.jab125.discordsocialsdk.api.discord;
 import dev.jab125.discordsocialsdk.api.$;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
 import dev.jab125.discordsocialsdk.impl.CrosshairUtils;
+import dev.jab125.discordsocialsdk.impl.c.Discord_String;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 
-import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.Discord_DeviceAuthorizationArgs_Init;
+import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 
 public class DeviceAuthorizationArgs implements PointerWrapper {
 	private final @$("Discord_DeviceAuthorizationArgs*") MemorySegment instance;
 	public DeviceAuthorizationArgs() {
 		this.instance = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
 		Discord_DeviceAuthorizationArgs_Init(instance);
+	}
+	public long clientId() {
+		return Discord_DeviceAuthorizationArgs_ClientId(instance);
+	}
+	public void setClientId(long clientId) {
+		Discord_DeviceAuthorizationArgs_SetClientId(instance, clientId);
+	}
+	public String scopes() {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment segment = arena.allocate(Discord_String.layout());
+			Discord_DeviceAuthorizationArgs_Scopes(instance, segment);
+			return CrosshairUtils.toJavaString(segment);
+		}
+	}
+	public void setScopes(String scopes) {
+		Discord_DeviceAuthorizationArgs_SetScopes(instance, CrosshairUtils.toDiscordString(scopes));
 	}
 
 	@Override
