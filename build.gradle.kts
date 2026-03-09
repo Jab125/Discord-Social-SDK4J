@@ -20,8 +20,8 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+//    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+//    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 //var secretSauce: String? = "https://gist.github.com/Jab125/9d29bdf8dc53a7895f17ca2d5e6b7950/raw/6bba1a6f8c35638375862f5c3a93f8ab16f0fff3/decoder.gradle"//System.getenv("secretSauce")
@@ -35,9 +35,9 @@ dependencies {
 //}
 
 
-tasks.test {
-    useJUnitPlatform()
-}
+//tasks.test {
+//    useJUnitPlatform()
+//}
 
 tasks.withType(JavaCompile::class).configureEach {
     options.release = 25
