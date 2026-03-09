@@ -100,6 +100,77 @@ public class Client implements PointerWrapper {
 		}
 	}
 	 */
+	// TODO EndCall
+	//  EndCalls
+	//  GetCall
+	//  GetCalls
+	//  GetCurrentInputDevice
+	//  GetCurrentOutputDevice
+	//  GetInputDevices
+	public float getInputVolume() {
+		return Discord_Client_GetInputVolume(instance);
+	}
+	// TODO GetOutputDevices
+	public float getOutputVolume() {
+		return Discord_Client_GetOutputVolume(instance);
+	}
+	public boolean getSelfDeafAll() {
+		return Discord_Client_GetSelfDeafAll(instance);
+	}
+	public boolean getSelfMuteAll() {
+		return Discord_Client_GetSelfMuteAll(instance);
+	}
+	public void setAecDump(boolean on) {
+		Discord_Client_SetAecDump(instance, on);
+	}
+	public void setAutomaticGainControl(boolean on) {
+		Discord_Client_SetAutomaticGainControl(instance, on);
+	}
+	// TODO SetDeviceChangeCallback
+	public void setEchoCancellation(boolean on) {
+		Discord_Client_SetEchoCancellation(instance, on);
+	}
+	// TODO SetInputDevice
+	public void setInputVolume(float inputVolume) {
+		Discord_Client_SetInputVolume(instance, inputVolume);
+	}
+	// TODO SetNoAudioInputCallback
+	public void setNoAudioInputThreshold(float dBFSThreshold) {
+		Discord_Client_SetNoAudioInputThreshold(instance, dBFSThreshold);
+	}
+	public void setNoiseSuppresion(boolean on) {
+		Discord_Client_SetNoiseSuppression(instance, on);
+	}
+	public void setOpusHardwareCoding(boolean encode, boolean decode) {
+		Discord_Client_SetOpusHardwareCoding(instance, encode, decode);
+	}
+	// TODO SetOutputDevice
+	public void setOutputVolume(float outputVolume) {
+		Discord_Client_SetOutputVolume(instance, outputVolume);
+	}
+	public void setSelfDeafAll(boolean deaf) {
+		Discord_Client_SetSelfDeafAll(instance, deaf);
+	}
+	public void setSelfMuteAll(boolean mute) {
+		Discord_Client_SetSelfMuteAll(instance, mute);
+	}
+	@Deprecated
+	public boolean setSpeakerMode(boolean speakerMode) {
+		return Discord_Client_SetSpeakerMode(instance, speakerMode);
+	}
+	// TODO SetThreadPriority
+	//  SetVoiceParticipantChangedCallback
+	public boolean showAudioRoutePicker() {
+		return Discord_Client_ShowAudioRoutePicker(instance);
+	}
+	// TODO StartCall
+	//  StartCallWithAudioCallbacks
+	public void abortAuthorize() {
+		Discord_Client_AbortAuthorize(instance);
+	}
+	public void abortGetTokenFromDevice() {
+		Discord_Client_AbortGetTokenFromDevice(instance);
+	}
 	public interface AuthorizationCallback {
 		void call(ClientResult result, String code, String redirectUri);
 	}
@@ -111,11 +182,17 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_Authorize(instance, args.getSegment(), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	public void closeAuthorizeDeviceScreen() {
+		Discord_Client_CloseAuthorizeDeviceScreen(instance);
+	}
 	public AuthorizationCodeVerifier createAuthorizationCodeVerifier() {
 		@$("Discord_AuthorizationCodeVerifier*") MemorySegment verifier = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
 		Discord_Client_CreateAuthorizationCodeVerifier(instance, verifier);
 		return new AuthorizationCodeVerifier(verifier);
 	}
+	// TODO ExchangeChildToken
+	//  FetchCurrentUser
+	//  GetProvisionalToken
 	public interface TokenExchangeCallback {
 		void call(ClientResult result, String accessToken, String refreshToken, AuthorizationTokenType tokenType, int expiresIn, String scopes);
 	}
@@ -125,6 +202,36 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_GetToken(instance, applicationId, CrosshairUtils.toDiscordString(code), CrosshairUtils.toDiscordString(codeVerifier), CrosshairUtils.toDiscordString(redirectUri), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	public void getTokenFromDevice(DeviceAuthorizationArgs args, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes)), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_GetTokenFromDevice(instance, args.getSegment(), callback__native, userDataFree, MemorySegment.NULL);
+	}
+	// TODO GetTokenFromDeviceProvisionalMerge
+	//  GetTokenFromProvisionalMerge
+	public boolean isAuthenticated() {
+		return Discord_Client_IsAuthenticated(instance);
+	}
+	public void openDeviceAuthorizeScreen(long clientId, String userCode) {
+		Discord_Client_OpenAuthorizeDeviceScreen(instance, clientId, CrosshairUtils.toDiscordString(userCode));
+	}
+	public void provisionalUserMergeCompleted(boolean success) {
+		Discord_Client_ProvisionalUserMergeCompleted(instance, success);
+	}
+	// TODO RefreshToken
+	//  RegisterAuthorizeRequestCallback
+	public void removeAuthorizeRequestCallback() {
+		Discord_Client_RemoveAuthorizeRequestCallback(instance);
+	}
+	// TODO RevokeToken
+	//  SetAuthorizeDeviceScreenClosedCallback
+	public void setGameWindowPid(int pid) {
+		Discord_Client_SetGameWindowPid(instance, pid);
+	}
+	// TODO SetTokenExpirationCallback
+	//  UnmergeIntoProvisionalAccount
+	//  UpdateProvisionalAccountDisplayName
 	public enum AuthorizationTokenType {
 		USER,
 		BEARER
@@ -138,6 +245,12 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_UpdateToken(instance, tokenType.ordinal(), CrosshairUtils.toDiscordString(token), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	public boolean canOpenMessageInDiscord(long messageId) {
+		return Discord_Client_CanOpenMessageInDiscord(instance, messageId);
+	}
+	// TODO DeleteUserMessage
+	//  EditUserMessage
+	//  GetChannelHandle
 	public interface GetLobbyMessagesCallback {
 		void call(ClientResult result, List<MessageHandle> messages);
 	}
@@ -152,6 +265,7 @@ public class Client implements PointerWrapper {
 		if (!Discord_Client_GetMessageHandle(instance, messageId, handle)) return Optional.empty();
 		return Optional.of(new MessageHandle(handle));
 	}
+	// TODO GetUserMessageSummaries
 	public interface UserMessagesWithLimitCallback {
 		void call(ClientResult result, List<MessageHandle> messages);
 	}
@@ -161,6 +275,7 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_GetUserMessagesWithLimit(instance, recipientId, limit, callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO OpenMessageInDiscord
 	public interface SendUserMessageCallback {
 		void call(ClientResult result, long messageId);
 	}
@@ -170,12 +285,14 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SendLobbyMessage(instance, lobbyId, CrosshairUtils.toDiscordString(message), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO SendLobbyMessageWithMetadata
 	public void sendUserMessage(long recipientId, String message, SendUserMessageCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_SendUserMessageCallback.allocate((result, messageId, userData) -> cb.call(new ClientResult(result), messageId), arena);
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SendUserMessage(instance, recipientId, CrosshairUtils.toDiscordString(message), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO SendUserMessageWithMetadata
 	public interface MessageCreatedCallback {
 		void call(long messageId);
 	}
@@ -203,6 +320,9 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SetMessageUpdatedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
 	}
+	public void setShowingChat(boolean showingChat) {
+		Discord_Client_SetShowingChat(instance, showingChat);
+	}
 	public enum LoggingSeverity {
 		VERBOSE,
 		INFO,
@@ -221,9 +341,19 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_AddLogCallback(instance, callback__native, userDataFree, MemorySegment.NULL, minSeverity.ordinal());
 	}
+	// TODO AddVoiceLogCallback
 	public void connect() {
 		Discord_Client_Connect(instance);
 	}
+	public void disconnect() {
+		Discord_Client_Disconnect(instance);
+	}
+	// TODO GetStatus
+	//  OpenConnectedGamesSettingsInDiscord
+	public void setApplicationId(long applicationId) {
+		Discord_Client_SetApplicationId(instance, applicationId);
+	}
+	// TODO SetLogDir
 	public enum Status {
 		DISCONNECTED,
 		CONNECTING,
@@ -257,6 +387,7 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_CreateOrJoinLobby(instance, CrosshairUtils.toDiscordString(secret), callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO CreateOrJoinLobbyWithMetadata
 	public interface GetGuildChannelsCallback {
 		void call(ClientResult result, List<GuildChannel> guildChannels);
 	}
@@ -288,6 +419,8 @@ public class Client implements PointerWrapper {
 
 		Discord_Client_GetUserGuilds(instance, callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO JoinLinkedLobbyGuild
+	//  LeaveLobby
 	public interface LinkOrUnlinkChannelCallback {
 		void call(ClientResult result);
 	}
@@ -297,6 +430,31 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_LinkChannelToLobby(instance, lobbyId, channelId, callback__native, userDataFree, MemorySegment.NULL);
 	}
+	// TODO SetLobbyCreatedCallback
+	//  SetLobbyDeletedCallback
+	//  SetLobbyMemberAddedCallback
+	//  SetLobbyMemberRemovedCallback
+	//  SetLobbyMemberUpdatedCallback
+	//  SetLobbyUpdatedCallback
+	//  UnlinkChannelFromLobby
+	//  IsDiscordAppInstalled
+	//  AcceptActivityInvite
+	public void clearRichPresence() {
+		Discord_Client_ClearRichPresence(instance);
+	}
+	public boolean registerLaunchCommand(long applicationId, String command) {
+		return Discord_Client_RegisterLaunchCommand(instance, applicationId, CrosshairUtils.toDiscordString(command));
+	}
+	public boolean registerLaunchSteamApplication(long applicationId, int steamAppId) {
+		return Discord_Client_RegisterLaunchSteamApplication(instance, applicationId, steamAppId);
+	}
+	// TODO SendActivityJoinRequest
+	//  SendActivityJoinRequestReply
+	//  SetActivityInviteCreatedCallback
+	//  SetActivityInviteUpdatedCallback
+	//  SetActivityJoinCallback
+	//  SetActivityJoinWithApplicationCallback
+	//  SetOnlineStatus
 	public interface UpdateRichPresenceCallback {
 		void call(ClientResult result);
 	}
