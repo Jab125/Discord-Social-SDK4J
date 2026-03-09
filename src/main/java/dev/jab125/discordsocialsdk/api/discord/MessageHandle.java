@@ -1,4 +1,4 @@
-// Copyright 2025 Jab125
+// Copyright 2025-2026 Jab125
 // This file is part of Discord-Social-SDK4J.
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // Discord-Social-SDK4J is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
@@ -7,13 +7,15 @@ package dev.jab125.discordsocialsdk.api.discord;
 
 import dev.jab125.discordsocialsdk.api.$;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
+import dev.jab125.discordsocialsdk.impl.CrosshairUtils;
+import dev.jab125.discordsocialsdk.impl.c.Discord_String;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.util.Optional;
 
-import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
+import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 
 public class MessageHandle implements PointerWrapper {
 	private final @$("Discord_MessageHandle*") MemorySegment instance;
@@ -47,9 +49,9 @@ public class MessageHandle implements PointerWrapper {
 	}
 	public String content() {
 		try (Arena arena = Arena.ofConfined()) {
-			@$("Discord_String*") MemorySegment string = arena.allocate(_Discord_String);
+			@$("Discord_String*") MemorySegment string = arena.allocate(Discord_String.layout());
 			Discord_MessageHandle_Content(instance, string);
-			return _String_Sugar(string);
+			return CrosshairUtils.toJavaString(string);
 		}
 	}
 	// TODO disclosureTypes
@@ -60,7 +62,7 @@ public class MessageHandle implements PointerWrapper {
 		return Discord_MessageHandle_Id(instance);
 	}
 	public Optional<LobbyHandle> lobby() {
-		@$("Discord_LobbyHandle*") MemorySegment lobby = Arena.ofAuto().allocate(_Discord_String);
+		@$("Discord_LobbyHandle*") MemorySegment lobby = Arena.ofAuto().allocate(Discord_String.layout());
 		boolean b = Discord_MessageHandle_Lobby(instance, lobby);
 		if (!b) return Optional.empty();
 		return Optional.of(new LobbyHandle(lobby));
@@ -68,9 +70,9 @@ public class MessageHandle implements PointerWrapper {
 	// todo metadata
 	public String rawContent() {
 		try (Arena arena = Arena.ofConfined()) {
-			@$("Discord_String*") MemorySegment string = arena.allocate(_Discord_String);
+			@$("Discord_String*") MemorySegment string = arena.allocate(Discord_String.layout());
 			Discord_MessageHandle_RawContent(instance, string);
-			return _String_Sugar(string);
+			return CrosshairUtils.toJavaString(string);
 		}
 	}
 	public Optional<UserHandle> recipient() {

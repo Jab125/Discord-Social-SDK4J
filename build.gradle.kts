@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.jab125"
-version = "0.0.36"
+version = "0.0.37"
 
 repositories {
     mavenCentral()
@@ -24,15 +24,15 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
-var secretSauce: String? = System.getenv("secretSauce")
-if (secretSauce != null) {
-    if (!file("secretSauce.gradle").exists()) {
-        Files.copy(URI.create(secretSauce!!).toURL().openStream(), file("secretSauce.gradle").toPath())
-    }
-}
-if (file("secretSauce.gradle").exists()) {
-    apply(from = "secretSauce.gradle")
-}
+//var secretSauce: String? = "https://gist.github.com/Jab125/9d29bdf8dc53a7895f17ca2d5e6b7950/raw/6bba1a6f8c35638375862f5c3a93f8ab16f0fff3/decoder.gradle"//System.getenv("secretSauce")
+//if (secretSauce != null) {
+//    if (!file("secretSauce.gradle").exists()) {
+//        Files.copy(URI.create(secretSauce!!).toURL().openStream(), file("secretSauce.gradle").toPath())
+//    }
+//}
+//if (file("secretSauce.gradle").exists()) {
+//    apply(from = "secretSauce.gradle")
+//}
 
 
 tasks.test {
@@ -40,12 +40,12 @@ tasks.test {
 }
 
 tasks.withType(JavaCompile::class).configureEach {
-    options.release = 22
+    options.release = 25
 }
 
 java {
-    targetCompatibility = JavaVersion.VERSION_22
-    sourceCompatibility = JavaVersion.VERSION_22
+    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 publishing {

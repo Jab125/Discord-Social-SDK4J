@@ -29,25 +29,25 @@ void main() throws InterruptedException {
         throw new Error("Failed to initialize natives!", e);
     }
 
-    System.out.println("🚀 Initializing Discord SDK...");
+    IO.println("🚀 Initializing Discord SDK...");
 
     // Create our Discord Client
     Client client = new Client();
 
     // Set up logging callback
     client.addLogCallback((message, severity) -> {
-        System.out.println("[" + severity + "] " + message);
+        IO.println("[" + severity + "] " + message);
     }, Client.LoggingSeverity.INFO);
 
     // Set up status callback to monitor client connection
     client.setStatusChangedCallback((status, error, errorDetail) -> {
-        System.out.println("🔄 Status changed: " + status);
+        IO.println("🔄 Status changed: " + status);
 
         if (status == Client.Status.READY) {
-            System.out.println("✅ Client is ready! You can now call SDK functions.");
+            IO.println("✅ Client is ready! You can now call SDK functions.");
 
             // Access initial relationships data
-            System.out.println("👥 Friends Count: " + client.getRelationships().size());
+            IO.println("👥 Friends Count: " + client.getRelationships().size());
 
             // Configure rich presence details
             Activity activity = new Activity();
@@ -58,7 +58,7 @@ void main() throws InterruptedException {
             // Update rich presence
             client.updateRichPresence(activity, result -> {
                 if (result.successful()) {
-                    System.out.println("🎮 Rich Presence updated successfully!");
+                    IO.println("🎮 Rich Presence updated successfully!");
                 } else {
                     System.err.println("❌ Rich Presence update failed");
                 }
@@ -81,16 +81,16 @@ void main() throws InterruptedException {
         if (!result.successful()) {
             System.err.println("❌ Authentication Error: " + result.error());
         } else {
-            System.out.println("✅ Authorization successful! Getting access token...");
+            IO.println("✅ Authorization successful! Getting access token...");
 
             // Exchange auth code for access token
             client.getToken(APPLICATION_ID, code, codeVerifier.verifier(), redirectUri,
                     (_, accessToken, _, _, _, _) -> {
-                        System.out.println("🔓 Access token received! Establishing connection...");
+                        IO.println("🔓 Access token received! Establishing connection...");
                         // Next Step: Update the token and connect
                         client.updateToken(Client.AuthorizationTokenType.BEARER, accessToken, clientResult -> {
                             if(clientResult.successful()) {
-                                System.out.println("🔑 Token updated, connecting to Discord...");
+                                IO.println("🔑 Token updated, connecting to Discord...");
                                 client.connect();
                             }
                         });

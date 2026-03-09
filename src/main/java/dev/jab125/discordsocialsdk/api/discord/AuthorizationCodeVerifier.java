@@ -1,4 +1,4 @@
-// Copyright 2025 Jab125
+// Copyright 2025-2026 Jab125
 // This file is part of Discord-Social-SDK4J.
 // Discord-Social-SDK4J is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // Discord-Social-SDK4J is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
@@ -7,13 +7,14 @@ package dev.jab125.discordsocialsdk.api.discord;
 
 import dev.jab125.discordsocialsdk.api.$;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
-import dev.jab125.discordsocialsdk.impl.CDiscord;
+import dev.jab125.discordsocialsdk.impl.CrosshairUtils;
+import dev.jab125.discordsocialsdk.impl.c.Discord_String;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 
-import static dev.jab125.discordsocialsdk.impl.CDiscord.*;
+import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 
 public class AuthorizationCodeVerifier implements PointerWrapper {
 	private final @$("Discord_AuthorizationCodeVerifier*") MemorySegment instance;
@@ -29,9 +30,9 @@ public class AuthorizationCodeVerifier implements PointerWrapper {
 
 	public String verifier() {
 		try (Arena arena = Arena.ofConfined()) {
-			@$("Discord_String*") MemorySegment string = arena.allocate(CDiscord._Discord_String);
+			@$("Discord_String*") MemorySegment string = Discord_String.allocate(arena);
 			Discord_AuthorizationCodeVerifier_Verifier(instance, string);
-			return _String_Sugar(string);
+			return CrosshairUtils.toJavaString(string);
 		}
 	}
 
