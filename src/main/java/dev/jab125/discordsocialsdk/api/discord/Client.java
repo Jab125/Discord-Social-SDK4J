@@ -6,6 +6,7 @@
 package dev.jab125.discordsocialsdk.api.discord;
 
 import dev.jab125.discordsocialsdk.api.$;
+import dev.jab125.discordsocialsdk.api.Discouraged;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
 import dev.jab125.discordsocialsdk.impl.CrosshairUtils;
 import dev.jab125.discordsocialsdk.impl.c.*;
@@ -30,9 +31,44 @@ public class Client implements PointerWrapper {
 		this.instance = instance;
 	}
 
+	@Discouraged("use Error#toString()")
+	public static String errorToString(Error type) {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_ErrorToString(type.ordinal(), allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
+	}
+	public long getApplicationId() {
+		return Discord_Client_GetApplicationId(instance);
+	}
+	///  @deprecated use {@link Client#getCurrentUserV2()} instead
+	@Deprecated(forRemoval = true)
+	public UserHandle getCurrentUser() {
+		@$("UserHandle*") MemorySegment handle = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Discord_Client_GetCurrentUser(instance, handle);
+		return new UserHandle(handle);
+	}
+	public static String getDefaultAudioDeviceId() {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_GetDefaultAudioDeviceId(allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
+	}
 	public String getDefaultPresenceScopes() {
-		// TODO hook into the SDK to get the result of this method
-		return "openid sdk.social_layer_presence";
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_GetDefaultPresenceScopes(allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
+	}
+	public static String getVersionHash() {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_GetVersionHash(allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
 	}
 	public int getVersionMajor() {
 		return Discord_Client_GetVersionMajor.makeInvoker().apply();
@@ -43,6 +79,27 @@ public class Client implements PointerWrapper {
 	public int getVersionPatch() {
 		return Discord_Client_GetVersionPatch.makeInvoker().apply();
 	}
+	public void setHttpRequestTimeout(int httpTimeoutInMilliseconds) {
+		Discord_Client_SetHttpRequestTimeout(instance, httpTimeoutInMilliseconds);
+	}
+	@Discouraged("use Status#toString()")
+	public static String statusToString(Status type) {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_StatusToString(type.ordinal(), allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
+	}
+	/*
+	@Discouraged("use Thread#toString()")
+	public static String threadToString(Thread type) {
+		try (Arena arena = Arena.ofConfined()) {
+			MemorySegment allocate = arena.allocate(Discord_String.layout());
+			Discord_Client_ThreadToString(type.ordinal(), allocate);
+			return CrosshairUtils.toJavaString(allocate);
+		}
+	}
+	 */
 	public interface AuthorizationCallback {
 		void call(ClientResult result, String code, String redirectUri);
 	}
