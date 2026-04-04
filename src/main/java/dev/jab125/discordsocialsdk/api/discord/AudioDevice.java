@@ -5,6 +5,19 @@
 // You should have received a copy of the GNU Lesser General Public License along with Discord-Social-SDK4J. If not, see <https://www.gnu.org/licenses/>.
 package dev.jab125.discordsocialsdk.api.discord;
 
-public enum Thread {
-	CLIENT, VOICE, NETWORK
+import dev.jab125.discordsocialsdk.api.$;
+import dev.jab125.discordsocialsdk.api.PointerWrapper;
+
+import java.lang.foreign.MemorySegment;
+
+public class AudioDevice implements PointerWrapper {
+	private final @$("Discord_Activity*") MemorySegment instance;
+	public AudioDevice(MemorySegment segment) {
+		this.instance = segment;
+	}
+
+	@Override
+	public MemorySegment getSegment() {
+		return instance;
+	}
 }

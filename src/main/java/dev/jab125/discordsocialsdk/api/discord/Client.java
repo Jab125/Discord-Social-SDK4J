@@ -25,11 +25,11 @@ import java.util.Optional;
 public class Client implements PointerWrapper {
 	public interface EndCallCallback { void call(); }
 	public interface EndCallsCallback { void call(); }
-	//public interface GetCurrentInputDeviceCallback { void call(AudioDevice device); }
-	//public interface GetCurrentOutputDeviceCallback { void call(AudioDevice device); }
-	//public interface GetInputDevicesCallback { void call(List<AudioDevice> devices); }
-	//public interface GetOutputDevicesCallback { void call(List<AudioDevice> devices); }
-	//public interface DeviceChangeCallback { void call(List<AudioDevice> inputDevices, List<AudioDevice> outputDevices); }
+	public interface GetCurrentInputDeviceCallback { void call(AudioDevice device); }
+	public interface GetCurrentOutputDeviceCallback { void call(AudioDevice device); }
+	public interface GetInputDevicesCallback { void call(List<AudioDevice> devices); }
+	public interface GetOutputDevicesCallback { void call(List<AudioDevice> devices); }
+	public interface DeviceChangeCallback { void call(List<AudioDevice> inputDevices, List<AudioDevice> outputDevices); }
 	public interface SetInputDeviceCallback { void call(ClientResult result); }
 	public interface NoAudioInputCallback { void call(boolean inputDetected); }
 	public interface SetOutputDeviceCallback { void call(ClientResult result); }
@@ -49,7 +49,36 @@ public class Client implements PointerWrapper {
 	public interface DeleteUserMessageCallback { void call(ClientResult result); }
 	public interface EditUserMessageCallback { void call(ClientResult result); }
 	public interface GetLobbyMessagesCallback { void call(ClientResult result, List<MessageHandle> messages); }
-	//public interface UserMessageSummariesCallback { void call(ClientResult result, List<UserMessageSummary> summaries); }
+	public interface UserMessageSummariesCallback { void call(ClientResult result, List<UserMessageSummary> summaries); }
+	public interface UserMessagesWithLimitCallback { void call(ClientResult result, List<MessageHandle> messages); }
+	public interface ProvisionalUserMergeRequiredCallback { void call(); }
+	public interface OpenMessageInDiscordCallback { void call(ClientResult result); }
+	public interface SendUserMessageCallback { void call(ClientResult result, long messageId); }
+	public interface MessageCreatedCallback { void call(long messageId); }
+	public interface MessageDeletedCallback { void call(long messageId, long channelId); }
+	public interface MessageUpdatedCallback { void call(long messageId); }
+	public interface LogCallback { void call(String message, LoggingSeverity severity); }
+	public interface OpenConnectedGamesSettingsInDiscordCallback { void call(ClientResult result); }
+	public interface OnStatusChanged { void call(Status status, Error error, int errorDetail); }
+	public interface CreateOrJoinLobbyCallback { void call(ClientResult result, long lobbyId); }
+	public interface GetGuildChannelsCallback { void call(ClientResult result, List<GuildChannel> guildChannels); }
+	public interface GetUserGuildsCallback { void call(ClientResult result, List<GuildMinimal> guilds); }
+	public interface JoinLinkedLobbyGuildCallback { void call(ClientResult result, String inviteUrl); }
+	public interface LeaveLobbyCallback { void call(ClientResult result); }
+	public interface LinkOrUnlinkChannelCallback { void call(ClientResult result); }
+	public interface LobbyCreatedCallback { void call(long lobbyId); }
+	public interface LobbyDeletedCallback { void call(long lobbyId); }
+	public interface LobbyMemberAddedCallback { void call(long lobbyId, long memberId); }
+	public interface LobbyMemberRemovedCallback { void call(long lobbyId, long memberId); }
+	public interface LobbyMemberUpdatedCallback { void call(long lobbyId, long memberId); }
+	public interface LobbyUpdatedCallback { void call(long lobbyId); }
+	public interface AcceptActivityInviteCallback { void call(ClientResult result, String joinSecret); }
+	public interface SendActivityInviteCallback { void call(ClientResult result); }
+
+
+
+
+
 
 	private final @$("Discord_Client*") MemorySegment instance;
 	public Client() {
@@ -282,9 +311,6 @@ public class Client implements PointerWrapper {
 		return Optional.of(new MessageHandle(handle));
 	}
 	// TODO GetUserMessageSummaries
-	public interface UserMessagesWithLimitCallback {
-		void call(ClientResult result, List<MessageHandle> messages);
-	}
 	public void getUserMessagesWithLimit(long recipientId, int limit, UserMessagesWithLimitCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_UserMessagesWithLimitCallback.allocate((result, messages, userData) -> cb.call(new ClientResult(result), CrosshairUtils.unpackMessageHandleSpan(messages).stream().map(MessageHandle::new).toList()), arena);
@@ -292,9 +318,6 @@ public class Client implements PointerWrapper {
 		Discord_Client_GetUserMessagesWithLimit(instance, recipientId, limit, callback__native, userDataFree, MemorySegment.NULL);
 	}
 	// TODO OpenMessageInDiscord
-	public interface SendUserMessageCallback {
-		void call(ClientResult result, long messageId);
-	}
 	public void sendLobbyMessage(long lobbyId, String message, SendUserMessageCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_SendUserMessageCallback.allocate((result, messageId, userData) -> cb.call(new ClientResult(result), messageId), arena);
@@ -309,26 +332,17 @@ public class Client implements PointerWrapper {
 		Discord_Client_SendUserMessage(instance, recipientId, CrosshairUtils.toDiscordString(message), callback__native, userDataFree, MemorySegment.NULL);
 	}
 	// TODO SendUserMessageWithMetadata
-	public interface MessageCreatedCallback {
-		void call(long messageId);
-	}
 	public void setMessageCreatedCallback(MessageCreatedCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_MessageCreatedCallback.allocate((messageId, userData) -> cb.call(messageId), arena);
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SetMessageCreatedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
 	}
-	public interface MessageDeletedCallback {
-		void call(long messageId, long channelId);
-	}
 	public void setMessageDeletedCallback(MessageDeletedCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_MessageDeletedCallback.allocate((messageId, channelId, userData) -> cb.call(messageId, channelId), arena);
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SetMessageDeletedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
-	}
-	public interface MessageUpdatedCallback {
-		void call(long messageId);
 	}
 	public void setMessageUpdatedCallback(MessageUpdatedCallback cb) {
 		Arena arena = Arena.ofShared();
@@ -345,9 +359,6 @@ public class Client implements PointerWrapper {
 		WARNING,
 		ERROR,
 		NONE
-	}
-	public interface LogCallback {
-		void call(String message, LoggingSeverity severity);
 	}
 	public void addLogCallback(LogCallback callback, LoggingSeverity minSeverity) {
 		Arena arena = Arena.ofShared();
@@ -379,9 +390,6 @@ public class Client implements PointerWrapper {
 		DISCONNECTING,
 		HTTP_WAIT
 	}
-	public interface OnStatusChanged {
-		void call(Status status, Error error, int errorDetail);
-	}
 	public enum Error {
 		NONE,
 		CONNECTION_FAILED,
@@ -394,9 +402,6 @@ public class Client implements PointerWrapper {
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_SetStatusChangedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
 	}
-	public interface CreateOrJoinLobbyCallback {
-		void call(ClientResult result, long lobbyId);
-	}
 	public void createOrJoinLobby(String secret, CreateOrJoinLobbyCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_CreateOrJoinLobbyCallback.allocate((result, lobbyId, userData) -> callback.call(new ClientResult(result), lobbyId), arena);
@@ -404,9 +409,6 @@ public class Client implements PointerWrapper {
 		Discord_Client_CreateOrJoinLobby(instance, CrosshairUtils.toDiscordString(secret), callback__native, userDataFree, MemorySegment.NULL);
 	}
 	// TODO CreateOrJoinLobbyWithMetadata
-	public interface GetGuildChannelsCallback {
-		void call(ClientResult result, List<GuildChannel> guildChannels);
-	}
 	public void getGuildChannels(long guildId, GetGuildChannelsCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_GetGuildChannelsCallback.allocate((result, guildChannels, userData) -> cb.call(new ClientResult(result), CrosshairUtils.unpackGuildChannelSpan(guildChannels).stream().map(GuildChannel::new).toList()), arena);
@@ -425,9 +427,6 @@ public class Client implements PointerWrapper {
 			return CrosshairUtils.unpackUInt64Span(allocated);
 		}
 	}
-	public interface GetUserGuildsCallback {
-		void call(ClientResult result, List<GuildMinimal> guilds);
-	}
 	public void getUserGuilds(GetUserGuildsCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_GetUserGuildsCallback.allocate((result, guilds, userData) -> cb.call(new ClientResult(result), CrosshairUtils.unpackGuildChannelSpan(guilds).stream().map(GuildMinimal::new).toList()), arena);
@@ -437,9 +436,6 @@ public class Client implements PointerWrapper {
 	}
 	// TODO JoinLinkedLobbyGuild
 	//  LeaveLobby
-	public interface LinkOrUnlinkChannelCallback {
-		void call(ClientResult result);
-	}
 	public void linkChannelToLobby(long lobbyId, long channelId, LinkOrUnlinkChannelCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_LinkOrUnlinkChannelCallback.allocate((result, userData) -> callback.call(new ClientResult(result)), arena);
