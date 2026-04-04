@@ -271,7 +271,32 @@ public class Client implements PointerWrapper {
 	public void setAutomaticGainControl(boolean on) {
 		Discord_Client_SetAutomaticGainControl(instance, on);
 	}
-	// TODO SetDeviceChangeCallback
+	public void setDeviceChangeCallback(DeviceChangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_DeviceChangeCallback.allocate((inputDevices, outputDevices, userData) -> {
+			List<AudioDevice> inputDevicesList = new ArrayList<>();
+			for (long i = 0; i < Discord_AudioDeviceSpan.size(inputDevices); i++) {
+				Arena arena1 = Arena.ofAuto();
+				MemorySegment newSegment = Discord_AudioDevice.allocate(arena1);
+				newSegment.copyFrom(Discord_AudioDevice.asSlice(Discord_AudioDeviceSpan.ptr(inputDevices), i));
+				inputDevicesList.add(new AudioDevice(newSegment, arena1));
+			}
+			Discord_Free(Discord_AudioDeviceSpan.ptr(inputDevices));
+			List<AudioDevice> outputDevicesList = new ArrayList<>();
+			for (long i = 0; i < Discord_AudioDeviceSpan.size(outputDevices); i++) {
+				Arena arena1 = Arena.ofAuto();
+				MemorySegment newSegment = Discord_AudioDevice.allocate(arena1);
+				newSegment.copyFrom(Discord_AudioDevice.asSlice(Discord_AudioDeviceSpan.ptr(inputDevices), i));
+				outputDevicesList.add(new AudioDevice(newSegment, arena1));
+			}
+			Discord_Free(Discord_AudioDeviceSpan.ptr(outputDevices));
+			callback.call(inputDevicesList, outputDevicesList);
+		}, arena);
+
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+
+		Discord_Client_SetDeviceChangeCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void setEchoCancellation(boolean on) {
 		Discord_Client_SetEchoCancellation(instance, on);
 	}
