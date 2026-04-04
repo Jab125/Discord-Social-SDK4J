@@ -8,6 +8,7 @@ package dev.jab125.discordsocialsdk.api.discord;
 import dev.jab125.discordsocialsdk.api.$;
 import dev.jab125.discordsocialsdk.api.Discouraged;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
+import dev.jab125.discordsocialsdk.api.holder.BooleanHolder;
 import dev.jab125.discordsocialsdk.impl.CrosshairUtils;
 import dev.jab125.discordsocialsdk.impl.c.*;
 
@@ -16,11 +17,40 @@ import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.ShortBuffer;
 import java.util.List;
 import java.util.Optional;
 
-// TODO uses of `auto`
+// TODO uses of `auto` arenas
 public class Client implements PointerWrapper {
+	public interface EndCallCallback { void call(); }
+	public interface EndCallsCallback { void call(); }
+	//public interface GetCurrentInputDeviceCallback { void call(AudioDevice device); }
+	//public interface GetCurrentOutputDeviceCallback { void call(AudioDevice device); }
+	//public interface GetInputDevicesCallback { void call(List<AudioDevice> devices); }
+	//public interface GetOutputDevicesCallback { void call(List<AudioDevice> devices); }
+	//public interface DeviceChangeCallback { void call(List<AudioDevice> inputDevices, List<AudioDevice> outputDevices); }
+	public interface SetInputDeviceCallback { void call(ClientResult result); }
+	public interface NoAudioInputCallback { void call(boolean inputDetected); }
+	public interface SetOutputDeviceCallback { void call(ClientResult result); }
+	public interface VoiceParticipantChangedCallback { void call(long lobbyId, long memberId, boolean added); }
+	public interface UserAudioReceivedCallback { void call(long userId, ShortBuffer /*TODO ShortBuffer or short[]?*/ data, long samplesPerChannel, int sampleRate, long channels, BooleanHolder outShouldMute); }
+	public interface UserAudioCapturedCallback { void call(ShortBuffer /*TODO ShortBuffer or short[]?*/ data, long samplesPerChannel, int sampleRate, long channels); }
+	public interface AuthorizationCallback { void call(ClientResult result, String code, String redirectUri); }
+	public interface ExchangeChildTokenCallback { void call(ClientResult result, String accessToken, AuthorizationTokenType tokenType, int expiresIn, String scopes); }
+	public interface FetchCurrentUserCallback{ void call(ClientResult result, long id, String name); }
+	public interface TokenExchangeCallback { void call(ClientResult result, String accessToken, String refreshToken, AuthorizationTokenType tokenType, int expiresIn, String scopes); }
+	public interface RevokeTokenCallback { void call(ClientResult result); }
+	public interface AuthorizationScreenClosedCallback { void call(); }
+	public interface TokenExpirationCallback { void call(); }
+	public interface UnmergeIntoProvisionalAccountCallback { void call(ClientResult result); }
+	public interface UpdateProvisionalAccountDisplayNameCallback { void call(ClientResult result); }
+	public interface UpdateTokenCallback { void call(ClientResult result); }
+	public interface DeleteUserMessageCallback { void call(ClientResult result); }
+	public interface EditUserMessageCallback { void call(ClientResult result); }
+	public interface GetLobbyMessagesCallback { void call(ClientResult result, List<MessageHandle> messages); }
+	//public interface UserMessageSummariesCallback { void call(ClientResult result, List<UserMessageSummary> summaries); }
+
 	private final @$("Discord_Client*") MemorySegment instance;
 	public Client() {
 		this.instance = Arena.global().allocate(ValueLayout.ADDRESS);
@@ -169,9 +199,6 @@ public class Client implements PointerWrapper {
 	public void abortGetTokenFromDevice() {
 		Discord_Client_AbortGetTokenFromDevice(instance);
 	}
-	public interface AuthorizationCallback {
-		void call(ClientResult result, String code, String redirectUri);
-	}
 	public void authorize(AuthorizationArgs args, AuthorizationCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_AuthorizationCallback.allocate((result, code, redirectUri, userData) -> {
@@ -191,9 +218,6 @@ public class Client implements PointerWrapper {
 	// TODO ExchangeChildToken
 	//  FetchCurrentUser
 	//  GetProvisionalToken
-	public interface TokenExchangeCallback {
-		void call(ClientResult result, String accessToken, String refreshToken, AuthorizationTokenType tokenType, int expiresIn, String scopes);
-	}
 	public void getToken(long applicationId, String code, String codeVerifier, String redirectUri, TokenExchangeCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes)), arena);
@@ -234,9 +258,6 @@ public class Client implements PointerWrapper {
 		USER,
 		BEARER
 	}
-	public interface UpdateTokenCallback {
-		void call(ClientResult result);
-	}
 	public void updateToken(AuthorizationTokenType tokenType, String token, UpdateTokenCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_UpdateTokenCallback.allocate((result, userData) -> callback.call(new ClientResult(result)), arena);
@@ -249,9 +270,6 @@ public class Client implements PointerWrapper {
 	// TODO DeleteUserMessage
 	//  EditUserMessage
 	//  GetChannelHandle
-	public interface GetLobbyMessagesCallback {
-		void call(ClientResult result, List<MessageHandle> messages);
-	}
 	public void getLobbyMessagesWithLimit(long lobbyId, int limit, GetLobbyMessagesCallback cb) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_GetLobbyMessagesCallback.allocate((result, messages, userData) -> cb.call(new ClientResult(result), CrosshairUtils.unpackMessageHandleSpan(messages).stream().map(MessageHandle::new).toList()), arena);
