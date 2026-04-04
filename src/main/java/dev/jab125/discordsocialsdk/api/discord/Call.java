@@ -7,15 +7,15 @@ package dev.jab125.discordsocialsdk.api.discord;
 
 import dev.jab125.discordsocialsdk.api.$;
 import dev.jab125.discordsocialsdk.api.PointerWrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 
-public class AudioDevice implements PointerWrapper {
-	private final @$("Discord_AudioDevice*") MemorySegment instance;
-	private final Arena arena;
-
-	public AudioDevice(MemorySegment segment, Arena arena) {
+public class Call implements PointerWrapper {
+	private final @Nullable Arena arena;
+	private final @$("Discord_Call*") MemorySegment instance;
+	public Call(MemorySegment segment, Arena arena) {
 		this.instance = segment;
 		this.arena = arena;
 	}

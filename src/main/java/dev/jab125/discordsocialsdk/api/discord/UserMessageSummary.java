@@ -11,7 +11,7 @@ import dev.jab125.discordsocialsdk.api.PointerWrapper;
 import java.lang.foreign.MemorySegment;
 
 public class UserMessageSummary implements PointerWrapper {
-	private final @$("Discord_Activity*") MemorySegment instance;
+	private final @$("Discord_UserMessageSummary*") MemorySegment instance;
 	public UserMessageSummary(MemorySegment segment) {
 		this.instance = segment;
 	}
