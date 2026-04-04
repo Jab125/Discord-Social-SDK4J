@@ -109,6 +109,12 @@ public class Client implements PointerWrapper {
 		Discord_Client_GetCurrentUser(instance, handle);
 		return new UserHandle(handle);
 	}
+	public Optional<UserHandle> getCurrentUserV2() {
+		Arena arena = Arena.ofAuto();
+		MemorySegment handle = arena.allocate(Discord_UserHandle.layout());
+		boolean isNonNull = Discord_Client_GetCurrentUserV2(instance, handle);
+		return isNonNull ? Optional.of(new UserHandle(handle, arena)) : Optional.empty();
+	}
 	public static String getDefaultAudioDeviceId() {
 		try (Arena arena = Arena.ofConfined()) {
 			MemorySegment allocate = arena.allocate(Discord_String.layout());
@@ -286,15 +292,13 @@ public class Client implements PointerWrapper {
 			for (long i = 0; i < Discord_AudioDeviceSpan.size(outputDevices); i++) {
 				Arena arena1 = Arena.ofAuto();
 				MemorySegment newSegment = Discord_AudioDevice.allocate(arena1);
-				newSegment.copyFrom(Discord_AudioDevice.asSlice(Discord_AudioDeviceSpan.ptr(inputDevices), i));
+				newSegment.copyFrom(Discord_AudioDevice.asSlice(Discord_AudioDeviceSpan.ptr(outputDevices), i));
 				outputDevicesList.add(new AudioDevice(newSegment, arena1));
 			}
 			Discord_Free(Discord_AudioDeviceSpan.ptr(outputDevices));
 			callback.call(inputDevicesList, outputDevicesList);
 		}, arena);
-
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
-
 		Discord_Client_SetDeviceChangeCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
 	}
 	public void setEchoCancellation(boolean on) {
