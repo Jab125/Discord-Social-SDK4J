@@ -42,6 +42,7 @@ public class Client implements PointerWrapper {
 	public interface ExchangeChildTokenCallback { void call(ClientResult result, String accessToken, AuthorizationTokenType tokenType, int expiresIn, String scopes); }
 	public interface FetchCurrentUserCallback{ void call(ClientResult result, long id, String name); }
 	public interface TokenExchangeCallback { void call(ClientResult result, String accessToken, String refreshToken, AuthorizationTokenType tokenType, int expiresIn, String scopes); }
+	public interface AuthorizeRequestCallback { void call(); }
 	public interface RevokeTokenCallback { void call(ClientResult result); }
 	public interface AuthorizationScreenClosedCallback { void call(); }
 	public interface TokenExpirationCallback { void call(); }
@@ -485,18 +486,55 @@ public class Client implements PointerWrapper {
 	public void provisionalUserMergeCompleted(boolean success) {
 		Discord_Client_ProvisionalUserMergeCompleted(instance, success);
 	}
-	// TODO RefreshToken
-	//  RegisterAuthorizeRequestCallback
+	public void refreshToken(long applicationId, String refreshToken, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment refreshToken__str = CrosshairUtils.toDiscordString(refreshToken);
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshTokenMemory, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshTokenMemory), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshTokenMemory));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_RefreshToken(instance, applicationId, refreshToken__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	public void registerAuthorizeRequestCallback(AuthorizeRequestCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_AuthorizeRequestCallback.allocate(userData -> callback.call(), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_RegisterAuthorizeRequestCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void removeAuthorizeRequestCallback() {
 		Discord_Client_RemoveAuthorizeRequestCallback(instance);
 	}
-	// TODO RevokeToken
-	//  SetAuthorizeDeviceScreenClosedCallback
+	public void revokeToken(long applicationId, String token, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment token__str = CrosshairUtils.toDiscordString(token);
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshToken));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_RevokeToken(instance, applicationId, token__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	public void setAuthorizeDeviceScreenClosedCallback(AuthorizationScreenClosedCallback cb) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_AuthorizeDeviceScreenClosedCallback.allocate(userData -> cb.call(), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetAuthorizeDeviceScreenClosedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void setGameWindowPid(int pid) {
 		Discord_Client_SetGameWindowPid(instance, pid);
 	}
-	// TODO SetTokenExpirationCallback
-	//  UnmergeIntoProvisionalAccount
+	public void setTokenExpirationCallback(TokenExpirationCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_TokenExpirationCallback.allocate(userData -> callback.call(), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetTokenExpirationCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	// TODO UnmergeIntoProvisionalAccount
 	//  UpdateProvisionalAccountDisplayName
 	public enum AuthorizationTokenType {
 		USER,

@@ -32,9 +32,10 @@ public class RelationshipHandle implements PointerWrapper {
 
 	@Nullable
 	public UserHandle user() {
-		@$("Discord_UserHandle*") MemorySegment user = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Arena arena = Arena.ofAuto();
+		@$("Discord_UserHandle*") MemorySegment user = arena.allocate(ValueLayout.ADDRESS);
 		boolean b = Discord_RelationshipHandle_User(instance, user);
-		return b ? new UserHandle(user) : null;
+		return b ? new UserHandle(user, arena) : null;
 	}
 
 	public RelationshipType discordRelationshipType() {

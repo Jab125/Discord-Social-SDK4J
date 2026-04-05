@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.jab125"
-version = "0.0.48"
+version = "0.0.49"
 
 repositories {
     mavenCentral()

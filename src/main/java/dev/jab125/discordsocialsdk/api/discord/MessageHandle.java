@@ -35,10 +35,11 @@ public class MessageHandle implements PointerWrapper {
 		}
 	}
 	public Optional<UserHandle> author() {
-		@$("Discord_UserHandle*") MemorySegment returnValue = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Arena arena = Arena.ofAuto();
+		@$("Discord_UserHandle*") MemorySegment returnValue = arena.allocate(ValueLayout.ADDRESS);
 		boolean b = Discord_MessageHandle_Author(instance, returnValue);
 		if (!b) return Optional.empty();
-		return Optional.of(new UserHandle(returnValue));
+		return Optional.of(new UserHandle(returnValue, arena));
 	}
 	public long authorId() {
 		return Discord_MessageHandle_AuthorId(instance);
@@ -76,10 +77,11 @@ public class MessageHandle implements PointerWrapper {
 		}
 	}
 	public Optional<UserHandle> recipient() {
-		@$("Discord_UserHandle*") MemorySegment returnValue = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Arena arena = Arena.ofAuto();
+		@$("Discord_UserHandle*") MemorySegment returnValue = arena.allocate(ValueLayout.ADDRESS);
 		boolean b = Discord_MessageHandle_Recipient(instance, returnValue);
 		if (!b) return Optional.empty();
-		return Optional.of(new UserHandle(returnValue));
+		return Optional.of(new UserHandle(returnValue, arena));
 	}
 	public long recipientId() {
 		return Discord_MessageHandle_RecipientId(instance);

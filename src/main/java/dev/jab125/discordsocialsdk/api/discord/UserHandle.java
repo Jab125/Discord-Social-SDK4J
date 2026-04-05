@@ -21,10 +21,6 @@ import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 public class UserHandle implements PointerWrapper {
 	private final @$("Discord_UserHandle*") MemorySegment instance;
 	private final Arena arena;
-	@Deprecated(forRemoval = true)
-	public UserHandle(@$("Discord_UserHandle*") MemorySegment instance) {
-		this(instance, null);
-	}
 	public UserHandle(@$("Discord_UserHandle*") MemorySegment instance, Arena arena) {
 		this.instance = instance;
 		this.arena = arena;
