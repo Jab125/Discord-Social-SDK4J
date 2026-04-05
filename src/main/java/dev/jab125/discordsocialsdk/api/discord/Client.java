@@ -14,6 +14,7 @@ import dev.jab125.discordsocialsdk.impl.c.*;
 
 import static dev.jab125.discordsocialsdk.impl.c.cdiscord_h.*;
 
+import java.lang.foreign.AddressLayout;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
@@ -349,13 +350,25 @@ public class Client implements PointerWrapper {
 		return Discord_Client_ShowAudioRoutePicker(instance);
 	}
 	public Call startCall(long channelId) {
-		Arena arena = Arena.ofConfined();
+		Arena arena = Arena.ofAuto();
 		boolean returnIsNonNull__;
 		@$("Discord_Call") MemorySegment returnValueNative__ = Discord_Call.allocate(arena);
 		returnIsNonNull__ = Discord_Client_StartCall(instance, channelId, returnValueNative__);
 		return returnIsNonNull__ ? new Call(returnValueNative__, arena) : null /*TODO DiscordObjectState*/;
 	}
-	// TODO StartCallWithAudioCallbacks
+	public Call startCallWithAudioCallbacks(long lobbyId, UserAudioReceivedCallback receivedCb, UserAudioCapturedCallback capturedCb) {
+		boolean returnIsNonNull__;
+		Arena autoArena = Arena.ofAuto();
+		@$("Discord_Call") MemorySegment returnValueNative__ = Discord_Call.allocate(autoArena);
+		Arena receivedArena = Arena.ofShared();
+		@$("Discord_Client_UserAudioReceivedCallback") MemorySegment receivedCb__native = Discord_Client_UserAudioReceivedCallback.allocate((userId, data, samplesPerChannel, sampleRate, channels, outShouldMute, userData) -> receivedCb.call(userId, data.asByteBuffer().asShortBuffer(), samplesPerChannel, sampleRate, channels, BooleanHolder.of(() -> outShouldMute.get(AddressLayout.JAVA_BOOLEAN, 0), b -> outShouldMute.set(AddressLayout.JAVA_BOOLEAN, 0, b))), receivedArena);
+		MemorySegment receivedUserDataFree = Discord_FreeFn.allocate(ptr -> receivedArena.close(), Arena.global());
+		Arena capturedArena = Arena.ofShared();
+		@$("Discord_Client_UserAudioCapturedCallback") MemorySegment capturedCb__native = Discord_Client_UserAudioCapturedCallback.allocate((data, samplesPerChannel, sampleRate, channels, userData) -> capturedCb.call(data.asByteBuffer().asShortBuffer(), samplesPerChannel, sampleRate, channels), capturedArena);
+		MemorySegment capturedUserDataFree = Discord_FreeFn.allocate(ptr -> capturedArena.close(), Arena.global());
+		returnIsNonNull__ = Discord_Client_StartCallWithAudioCallbacks(instance, lobbyId, receivedCb__native, receivedUserDataFree, MemorySegment.NULL, capturedCb__native, capturedUserDataFree, MemorySegment.NULL, returnValueNative__);
+		return returnIsNonNull__ ? new Call(returnValueNative__, autoArena) : null /*TODO DiscordObjectState*/;
+	}
 	public void abortAuthorize() {
 		Discord_Client_AbortAuthorize(instance);
 	}
@@ -378,9 +391,47 @@ public class Client implements PointerWrapper {
 		Discord_Client_CreateAuthorizationCodeVerifier(instance, verifier);
 		return new AuthorizationCodeVerifier(verifier);
 	}
-	// TODO ExchangeChildToken
-	//  FetchCurrentUser
-	//  GetProvisionalToken
+	public void exchangeClientToken(String parentApplicationToken, long childApplicationId, ExchangeChildTokenCallback callback) {
+		Arena arena = Arena.ofShared();
+		@$("Discord_String") MemorySegment parentApplicationToken__str = CrosshairUtils.toDiscordString(parentApplicationToken);
+		@$("Discord_Client_ExchangeChildTokenCallback") MemorySegment callback__native = Discord_Client_ExchangeChildTokenCallback.allocate((result, accessToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_ExchangeChildToken(instance, parentApplicationToken__str, childApplicationId, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	public void fetchCurrentUser(AuthorizationTokenType tokenType, String token, FetchCurrentUserCallback callback) {
+		Arena arena = Arena.ofShared();
+		@$("Discord_String") MemorySegment token__str = CrosshairUtils.toDiscordString(token);
+		@$("Discord_Client_FetchCurrentUserCallback") MemorySegment callback__native = Discord_Client_FetchCurrentUserCallback.allocate((result, id, name, userData) -> {
+			ClientResult result__obj = new ClientResult(result);
+			String name__str = CrosshairUtils.toJavaString(name);
+			callback.call(result__obj, id, name__str);
+			Discord_Free(Discord_String.ptr(name));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_FetchCurrentUser(instance, tokenType.ordinal(), token__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	public enum AuthenticationExternalAuthType {
+		OIDC,
+		EPIC_ONLINE_SERVICES_ACCESS_TOKEN,
+		EPIC_ONLINE_SERVICES_ID_TOKEN,
+		STEAM_SESSION_TICKET,
+		UNITY_SERVICES_ID_TOKEN
+	}
+	public void getProvisionalToken(long applicationId, AuthenticationExternalAuthType externalAuthType, String externalAuthToken, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshToken));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_GetProvisionalToken(instance, applicationId, externalAuthType.ordinal(), CrosshairUtils.toDiscordString(externalAuthToken), callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void getToken(long applicationId, String code, String codeVerifier, String redirectUri, TokenExchangeCallback callback) {
 		Arena arena = Arena.ofShared();
 		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes)), arena);
@@ -389,12 +440,42 @@ public class Client implements PointerWrapper {
 	}
 	public void getTokenFromDevice(DeviceAuthorizationArgs args, TokenExchangeCallback callback) {
 		Arena arena = Arena.ofShared();
-		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes)), arena);
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshToken));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
 		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
 		Discord_Client_GetTokenFromDevice(instance, args.getSegment(), callback__native, userDataFree, MemorySegment.NULL);
 	}
-	// TODO GetTokenFromDeviceProvisionalMerge
-	//  GetTokenFromProvisionalMerge
+	public void getTokenFromDeviceProvisionalMerge(DeviceAuthorizationArgs args, AuthenticationExternalAuthType externalAuthType, String externalAuthToken, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment externalAuthToken__str = CrosshairUtils.toDiscordString(externalAuthToken);
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshToken));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_GetTokenFromDeviceProvisionalMerge(instance, args.getSegment(), externalAuthType.ordinal(), externalAuthToken__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	public void getTokenFromProvisionalMerge(long applicationId, String code, String codeVerifier, String redirectUri, AuthenticationExternalAuthType externalAuthType, String externalAuthToken, TokenExchangeCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment code__str = CrosshairUtils.toDiscordString(externalAuthToken);
+		MemorySegment codeVerifier__str = CrosshairUtils.toDiscordString(externalAuthToken);
+		MemorySegment redirectUri__str = CrosshairUtils.toDiscordString(externalAuthToken);
+		MemorySegment externalAuthToken__str = CrosshairUtils.toDiscordString(externalAuthToken);
+		MemorySegment callback__native = Discord_Client_TokenExchangeCallback.allocate((result, accessToken, refreshToken, tokenType, expiresIn, scopes, userData) -> {
+			callback.call(new ClientResult(result), CrosshairUtils.toJavaString(accessToken), CrosshairUtils.toJavaString(refreshToken), AuthorizationTokenType.values()[tokenType], expiresIn, CrosshairUtils.toJavaString(scopes));
+			Discord_Free(Discord_String.ptr(scopes));
+			Discord_Free(Discord_String.ptr(refreshToken));
+			Discord_Free(Discord_String.ptr(accessToken));
+		}, arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_GetTokenFromProvisionalMerge(instance, applicationId, code__str, codeVerifier__str, redirectUri__str, externalAuthType.ordinal(), externalAuthToken__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public boolean isAuthenticated() {
 		return Discord_Client_IsAuthenticated(instance);
 	}
