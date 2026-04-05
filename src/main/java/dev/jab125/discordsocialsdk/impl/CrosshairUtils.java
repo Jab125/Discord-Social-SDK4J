@@ -30,8 +30,8 @@ public class CrosshairUtils {
 		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 		MemorySegment seg = Arena.ofAuto().allocate(bytes.length);
 		seg.asByteBuffer().put(bytes);
-		Discord_String.layout().varHandle(MemoryLayout.PathElement.groupElement("ptr")).set(allocate, 0, seg);
-		Discord_String.layout().varHandle(MemoryLayout.PathElement.groupElement("size")).set(allocate, 0, (long) bytes.length);
+		Discord_String.ptr(allocate, seg);
+		Discord_String.size(allocate, bytes.length);
 		return allocate;
 	}
 

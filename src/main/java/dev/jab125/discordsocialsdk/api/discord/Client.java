@@ -102,19 +102,6 @@ public class Client implements PointerWrapper {
 	public long getApplicationId() {
 		return Discord_Client_GetApplicationId(instance);
 	}
-	///  @deprecated use {@link Client#getCurrentUserV2()} instead
-	@Deprecated(forRemoval = true)
-	public UserHandle getCurrentUser() {
-		@$("UserHandle*") MemorySegment handle = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
-		Discord_Client_GetCurrentUser(instance, handle);
-		return new UserHandle(handle);
-	}
-	public Optional<UserHandle> getCurrentUserV2() {
-		Arena arena = Arena.ofAuto();
-		MemorySegment handle = arena.allocate(Discord_UserHandle.layout());
-		boolean isNonNull = Discord_Client_GetCurrentUserV2(instance, handle);
-		return isNonNull ? Optional.of(new UserHandle(handle, arena)) : Optional.empty();
-	}
 	public static String getDefaultAudioDeviceId() {
 		try (Arena arena = Arena.ofConfined()) {
 			MemorySegment allocate = arena.allocate(Discord_String.layout());
@@ -304,21 +291,38 @@ public class Client implements PointerWrapper {
 	public void setEchoCancellation(boolean on) {
 		Discord_Client_SetEchoCancellation(instance, on);
 	}
-	// TODO SetInputDevice
+	public void setInputDevice(String deviceId, SetInputDeviceCallback cb) {
+		Arena arena = Arena.ofShared();
+		MemorySegment deviceId__str = CrosshairUtils.toDiscordString(deviceId);
+		MemorySegment callback__native = Discord_Client_SetInputDeviceCallback.allocate((result, userData) -> cb.call(new ClientResult(result)), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetInputDevice(instance, deviceId__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void setInputVolume(float inputVolume) {
 		Discord_Client_SetInputVolume(instance, inputVolume);
 	}
-	// TODO SetNoAudioInputCallback
+	public void setNoAudioInputCallback(NoAudioInputCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_NoAudioInputCallback.allocate((inputDetected, userData) -> callback.call(inputDetected), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetNoAudioInputCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void setNoAudioInputThreshold(float dBFSThreshold) {
 		Discord_Client_SetNoAudioInputThreshold(instance, dBFSThreshold);
 	}
-	public void setNoiseSuppresion(boolean on) {
+	public void setNoiseSuppression(boolean on) {
 		Discord_Client_SetNoiseSuppression(instance, on);
 	}
 	public void setOpusHardwareCoding(boolean encode, boolean decode) {
 		Discord_Client_SetOpusHardwareCoding(instance, encode, decode);
 	}
-	// TODO SetOutputDevice
+	public void setOutputDevice(String deviceId, SetOutputDeviceCallback cb) {
+		Arena arena = Arena.ofShared();
+		MemorySegment deviceId__str = CrosshairUtils.toDiscordString(deviceId);
+		MemorySegment callback__native = Discord_Client_SetOutputDeviceCallback.allocate((result, userData) -> cb.call(new ClientResult(result)), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetOutputDevice(instance, deviceId__str, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public void setOutputVolume(float outputVolume) {
 		Discord_Client_SetOutputVolume(instance, outputVolume);
 	}
@@ -332,13 +336,26 @@ public class Client implements PointerWrapper {
 	public boolean setSpeakerMode(boolean speakerMode) {
 		return Discord_Client_SetSpeakerMode(instance, speakerMode);
 	}
-	// TODO SetThreadPriority
-	//  SetVoiceParticipantChangedCallback
+	public void setThreadPriority(Thread thread, int priority) {
+		Discord_Client_SetThreadPriority(instance, thread.ordinal(), priority);
+	}
+	public void setVoiceParticipantChangedCallback(VoiceParticipantChangedCallback cb) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_VoiceParticipantChangedCallback.allocate((lobbyId, memberId, added, userData) -> cb.call(lobbyId, memberId, added), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_SetVoiceParticipantChangedCallback(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
 	public boolean showAudioRoutePicker() {
 		return Discord_Client_ShowAudioRoutePicker(instance);
 	}
-	// TODO StartCall
-	//  StartCallWithAudioCallbacks
+	public Call startCall(long channelId) {
+		Arena arena = Arena.ofConfined();
+		boolean returnIsNonNull__;
+		@$("Discord_Call") MemorySegment returnValueNative__ = Discord_Call.allocate(arena);
+		returnIsNonNull__ = Discord_Client_StartCall(instance, channelId, returnValueNative__);
+		return returnIsNonNull__ ? new Call(returnValueNative__, arena) : null /*TODO DiscordObjectState*/;
+	}
+	// TODO StartCallWithAudioCallbacks
 	public void abortAuthorize() {
 		Discord_Client_AbortAuthorize(instance);
 	}
@@ -608,10 +625,25 @@ public class Client implements PointerWrapper {
 		Discord_Client_GetRelationshipsByGroup(instance, groupType.ordinal(), memorySegment);
 		return CrosshairUtils.unpackRelationshipHandleSpan(memorySegment).stream().map(RelationshipHandle::new).toList();
 	}
+	///  @deprecated use {@link Client#getCurrentUserV2()} instead
+	@Deprecated(forRemoval = true)
+	public UserHandle getCurrentUser() {
+		Arena arena = Arena.ofAuto();
+		@$("UserHandle*") MemorySegment handle = arena.allocate(ValueLayout.ADDRESS);
+		Discord_Client_GetCurrentUser(instance, handle);
+		return new UserHandle(handle, arena);
+	}
+	public Optional<UserHandle> getCurrentUserV2() {
+		Arena arena = Arena.ofAuto();
+		MemorySegment handle = arena.allocate(Discord_UserHandle.layout());
+		boolean isNonNull = Discord_Client_GetCurrentUserV2(instance, handle);
+		return isNonNull ? Optional.of(new UserHandle(handle, arena)) : Optional.empty();
+	}
 	public Optional<UserHandle> getUser(long userId) {
-		@$("Discord_UserHandle*") MemorySegment handle = Arena.ofAuto().allocate(ValueLayout.ADDRESS);
+		Arena arena = Arena.ofAuto();
+		@$("Discord_UserHandle*") MemorySegment handle = arena.allocate(ValueLayout.ADDRESS);
 		if (!Discord_Client_GetUser(instance, userId, handle)) return Optional.empty();
-		return Optional.of(new UserHandle(handle));
+		return Optional.of(new UserHandle(handle, arena));
 	}
 
 	@Override
