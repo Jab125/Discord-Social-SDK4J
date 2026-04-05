@@ -76,6 +76,7 @@ public class Client implements PointerWrapper {
 	public interface LobbyMemberUpdatedCallback { void call(long lobbyId, long memberId); }
 	public interface LobbyUpdatedCallback { void call(long lobbyId); }
 	public interface AcceptActivityInviteCallback { void call(ClientResult result, String joinSecret); }
+	public interface IsDiscordAppInstalledCallback { void call(boolean installed); }
 	public interface SendActivityInviteCallback { void call(ClientResult result); }
 
 
@@ -702,8 +703,13 @@ public class Client implements PointerWrapper {
 	//  SetLobbyMemberUpdatedCallback
 	//  SetLobbyUpdatedCallback
 	//  UnlinkChannelFromLobby
-	//  IsDiscordAppInstalled
-	//  AcceptActivityInvite
+	public void isDiscordAppInstalled(IsDiscordAppInstalledCallback callback) {
+		Arena arena = Arena.ofShared();
+		MemorySegment callback__native = Discord_Client_IsDiscordAppInstalledCallback.allocate((installed, userData) -> callback.call(installed), arena);
+		MemorySegment userDataFree = Discord_FreeFn.allocate(ptr -> arena.close(), Arena.global());
+		Discord_Client_IsDiscordAppInstalled(instance, callback__native, userDataFree, MemorySegment.NULL);
+	}
+	// TODO AcceptActivityInvite
 	public void clearRichPresence() {
 		Discord_Client_ClearRichPresence(instance);
 	}
